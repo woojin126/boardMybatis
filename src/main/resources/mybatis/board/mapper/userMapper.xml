@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.board.mapper.UserMapper">
+    <select id="boardList" resultType="mybatis.board.domain.UserVO">
+    SELECT id,author,title,content,regdate FROM board
+    </select>
+    <insert id="insertBoard">
+        INSERT INTO board(id,
+                          author,
+                          title,
+                          content
+
+                          )
+                          VALUES (
+                         board_sequence.nextval,
+                         #{author},
+                         #{title},
+                         #{content}
+
+
+            )
+    </insert>
+    <select id="findByItem" resultType="mybatis.board.domain.UserVO">
+        SELECT * FROM board where id=#{id}
+    </select>
+</mapper>
+

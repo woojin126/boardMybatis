@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link href="../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+    </style>
+</head>
+<body>
+<header th:insert="common/header.html"></header>
+<div class="container">
+    <div class="py-5 text-center">
+        <h2>게시글 상세</h2>
+    </div>
+
+    <div>
+        <label for="itemId">게시글 번호</label>
+        <input type="text" id="itemId" name="itemId" class="form-control"
+               value="1" th:value="${item.id}" readonly>
+    </div>
+    <div>
+        <label for="itemTitle">제목</label>
+        <input type="text" id="itemTitle" name="itemTitle" class="form-control"
+               value="1" th:value="${item.title}" readonly>
+    </div>
+<div>
+        <label for="itemContent">내용</label>
+        <input type="text" id="itemContent" name="itemContent" class="form-control"
+               value="1" th:value="${item.content}" readonly>
+    </div>
+</div>
+</body>
+</html>
