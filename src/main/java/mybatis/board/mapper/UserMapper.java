@@ -1,5 +1,6 @@
 package mybatis.board.mapper;
 
+import mybatis.board.domain.Criteria;
 import mybatis.board.domain.UserVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,8 +13,10 @@ import java.util.Optional;
 public interface UserMapper {
 
 
-    public List<UserVO> boardList();
+    public List<UserVO> boardList(Criteria cri) throws Exception;
+    public int listCount() throws Exception;
     public void insertBoard(UserVO userVO);
     public UserVO findByItem(Long id);
+    public int updateViewCnt(Long id);
 
 }
