@@ -27,10 +27,15 @@
         <input type="text" id="itemTitle" name="itemTitle" class="form-control"
                value="1" th:value="${item.title}" readonly>
     </div>
-<div>
+    <div>
         <label for="itemContent">내용</label>
         <input type="text" id="itemContent" name="itemContent" class="form-control"
                value="1" th:value="${item.content}" readonly>
+    </div>
+    <div>
+        <label for="itemreCnt">조회수</label>
+        <input type="text" id="itemreCnt" name="itemreCnt" class="form-control"
+               value="1" th:value="${item.recnt}" readonly>
     </div>
 </div>
 </body>
