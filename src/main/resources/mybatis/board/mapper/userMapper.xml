@@ -32,15 +32,15 @@
                           title,
                           content
 
-                          )
-                          VALUES (
-                         board_sequence.nextval,
-                         #{author},
-                         #{title},
-                         #{content}
+        )
+        VALUES (
+                   board_sequence.nextval,
+                   #{author},
+                   #{title},
+                   #{content}
 
 
-            )
+               )
     </insert>
     <select id="findByItem" resultType="mybatis.board.domain.UserVO">
         SELECT * FROM board where id=#{id}
@@ -50,4 +50,3 @@
         UPDATE board set recnt = recnt + 1 where id=#{id}
     </update>
 </mapper>
-
