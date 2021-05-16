@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-
+      <!--xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{samples/layout/sampleLayout}"-->
 <head>
     <meta charset="utf-8">
     <link href="../css/bootstrap.min.css"
@@ -57,28 +58,29 @@
             <a class="btn btn-primary" th:href="@{/post}" role="button">글쓰기</a>
         </div>
     </div>
-    <div class="box-footer clearfix">
-        <span th:text="${pageMaker.cri.page}"></span>
-        <ul class="pagination pagination-sm no-margin pull-right">
 
-            <li th:if="${pageMaker.prev} == true">
-                <a th:href="@{/board/list(page=${pageMaker.startPage}-1)}"><<<<<</a>
-            </li>
 
-            <li th:each="idx,iterStat : ${#numbers.sequence(pageMaker.startPage,pageMaker.endPage)}"
-                th:classappend="${pageMaker.cri.page} == ${idx} ? active : userclass ">
-                <a th:href="@{/board/list(page=${idx})}" th:text="${idx}"></a>
-            </li>
+</div>
+<div class="box-footer clearfix">
+    <ul class="pagination pagination-sm no-margin pull-right">
 
-            <li th:if="${pageMaker.next} == true and ${pageMaker.endPage > 0}">
-                <a th:href="@{/board/list(page=${pageMaker.endPage}+1)}">>>>>>>>></a>
-            </li>
+        <li th:if="${pageMaker.prev} == true">
+            <a th:href="@{/list(page=${pageMaker.startPage}-1,perPageNum=${pageMaker.cri.perPageNum})}">&laquo;</a>
+        </li>
 
-        </ul>
+        <li th:each="idx,iterStat : ${#numbers.sequence(pageMaker.startPage,pageMaker.endPage)}"
+            th:classappend="${pageMaker.cri.page} == ${idx} ? active : null">
+            <a th:href="@{/list(page=${idx},perPageNum=${pageMaker.cri.perPageNum})}" th:text="${idx}"></a>
+        </li>
 
-    </div>
+        <li th:if="${pageMaker.next} == true and ${pageMaker.endPage > 0}">
+            <a th:href="@{/list(page=${pageMaker.endPage}+1,perPageNum=${pageMaker.cri.perPageNum})}">&raquo;</a>
+        </li>
+
+    </ul>
 
 </div>
 
+</div>
 </body>
 </html>
