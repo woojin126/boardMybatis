@@ -1,20 +1,19 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-      <!--xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{samples/layout/sampleLayout}"-->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
 <head>
-    <meta charset="utf-8">
-    <link href="../css/bootstrap.min.css"
-          th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
     <style>
-        .container {
-            max-width: 560px;
+        .box-footer{
+            display: flex;
+            justify-content: center;
         }
     </style>
 </head>
-<body>
-<header th:insert="common/header.html"></header>
-<div class="container">
+
+
+<div class="container" layout:fragment="content">
     <table class="table">
         <thead class="thead-light">
         <tr class="text-center">
@@ -48,6 +47,8 @@
             <td>
                 <span th:text="${post.recnt}">regDate</span>
             </td>
+
+
         </tr>
         </tbody>
     </table>
@@ -60,27 +61,33 @@
     </div>
 
 
+
+
+  <div class="box-footer clearfix">
+        <ul class="pagination pagination-sm no-margin pull-right">
+
+            <li th:if="${pageMaker.prev} == false">
+                <a th:href="@{/list(page=${pageMaker.startPage}-1,perPageNum=${pageMaker.cri.perPageNum})}">&laquo;</a>
+            </li>
+
+            <li th:each="idx,iterStat : ${#numbers.sequence(pageMaker.startPage,pageMaker.endPage)}"
+                th:classappend="${pageMaker.cri.page} == ${idx} ? active : null ">
+                <a th:href="@{/list(page=${idx},perPageNum=${pageMaker.cri.perPageNum})}" th:text="${idx}"></a>
+            </li>
+
+            <li th:if="${pageMaker.next} == false and ${pageMaker.endPage > 0}">
+                <a th:href="@{/list(page=${pageMaker.endPage},perPageNum=${pageMaker.cri.perPageNum})}">&raquo;</a>
+            </li>
+
+        </ul>
+
+    </div>
+
+<!--
+https://melonpeach.tistory.com/27?category=806570-->
+
 </div>
-<div class="box-footer clearfix">
-    <ul class="pagination pagination-sm no-margin pull-right">
 
-        <li th:if="${pageMaker.prev} == true">
-            <a th:href="@{/list(page=${pageMaker.startPage}-1,perPageNum=${pageMaker.cri.perPageNum})}">&laquo;</a>
-        </li>
 
-        <li th:each="idx,iterStat : ${#numbers.sequence(pageMaker.startPage,pageMaker.endPage)}"
-            th:classappend="${pageMaker.cri.page} == ${idx} ? active : null">
-            <a th:href="@{/list(page=${idx},perPageNum=${pageMaker.cri.perPageNum})}" th:text="${idx}"></a>
-        </li>
 
-        <li th:if="${pageMaker.next} == true and ${pageMaker.endPage > 0}">
-            <a th:href="@{/list(page=${pageMaker.endPage}+1,perPageNum=${pageMaker.cri.perPageNum})}">&raquo;</a>
-        </li>
-
-    </ul>
-
-</div>
-
-</div>
-</body>
 </html>
