@@ -1,4 +1,5 @@
 package mybatis.board.controller;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import mybatis.board.domain.Criteria;
 import mybatis.board.domain.PageMaker;
@@ -7,16 +8,12 @@ import mybatis.board.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,9 +30,8 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    public String list(Model model, Criteria cri) throws Exception
+    public String list(Model model , Criteria cri) throws Exception
     {
-
         List<UserVO> boardList = userServiceImpl.getBoardList(cri);
         model.addAttribute("boardList",boardList);
 
@@ -81,7 +77,6 @@ public class UserController {
 
         UserVO item = userServiceImpl.findById(id);
 
-
         Cookie[] cookies = request.getCookies();
         Cookie viewCookie = null;
 
@@ -100,7 +95,7 @@ public class UserController {
         if(item != null)
         {
                 model.addAttribute("item",item);
-
+                log.info("item={}",item.getId());
                 if(viewCookie == null)
                 {
                     System.out.println("쿠키가 없는 친구 었네?");
@@ -133,5 +128,12 @@ public class UserController {
             return "board/detailItemError";
         }
 
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id){
+        userServiceImpl.deleteById(id);
+
+        return "redirect:/list";
     }
 }
