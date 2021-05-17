@@ -1,5 +1,6 @@
 package mybatis.board.domain;
 
+
 public class Criteria {
 
     private int page;
@@ -69,3 +70,4 @@ public class Criteria {
                 '}';
     }
 }
+
