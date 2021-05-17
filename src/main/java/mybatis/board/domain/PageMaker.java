@@ -3,6 +3,7 @@ package mybatis.board.domain;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+
 public class PageMaker {
 
     private int totalCount;
@@ -52,6 +53,7 @@ public class PageMaker {
 
     private void calcData() {
         endPage = (int) (Math.ceil(cri.getPage() / (double)displayPageNum) * displayPageNum);
+        System.out.println(endPage);
         startPage = (endPage - displayPageNum) + 1;
 
         int tempEndPage = (int) (Math.ceil(totalCount / (double)cri.getPerPageNum()));
@@ -59,7 +61,9 @@ public class PageMaker {
             endPage = tempEndPage;
         }
         prev = startPage == 1 ? false : true;
+
         next = endPage * cri.getPerPageNum() >= totalCount ? false : true;
+
     }
 
     public String makeQuery(int page) {
@@ -74,3 +78,4 @@ public class PageMaker {
 
 
 }
+
