@@ -1,18 +1,18 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8">
-    <link href="../css/bootstrap.min.css"
-          th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
-    <style>
-        .container {
-            max-width: 560px;
-        }
-    </style>
-</head>
-<body>
-<header th:insert="common/header.html"></header>
-<div class="container">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+
+<style>
+    .row > div{
+        display: flex;
+        justify-content: space-evenly;
+
+    }
+</style>
+
+<div class="container" layout:fragment="content">
+
     <div class="py-5 text-center">
         <h2>게시글 상세</h2>
     </div>
@@ -37,6 +37,22 @@
         <input type="text" id="itemreCnt" name="itemreCnt" class="form-control"
                value="1" th:value="${item.recnt}" readonly>
     </div>
+
+    <div class="row">
+         <div class="delete">
+              <a class="btn btn-primary" th:href="@{/delete/{id}(id=${item.id})}" role="button">삭제</a>
+          </div>
+        <div class="list">
+              <a class="btn btn-primary" th:href="@{/list}" role="button">목록</a>
+        </div>
+        <div class="update">
+            <a class="btn btn-primary" th:href="@{/update}" role="button">수정</a>
+        </div>
+    </div>
 </div>
-</body>
+
+
+
+</div>
+
 </html>
