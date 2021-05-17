@@ -10,7 +10,8 @@ import javax.validation.constraints.NotEmpty;
  * @valid 유효성 검증을위해 @NotEmpty @NotBlank 설정 
  * 공백문자나 , NULL 오면 Errors에 들어감
  */
-@Getter @Setter
+
+@Setter @Getter
 public class UserVO {
     
  
@@ -36,5 +37,7 @@ public class UserVO {
                 ", recnt=" + recnt +
                 '}';
     }
+
+
 }
 
