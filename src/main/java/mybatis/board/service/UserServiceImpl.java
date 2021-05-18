@@ -1,14 +1,18 @@
 package mybatis.board.service;
 
+
 import mybatis.board.domain.Criteria;
 import mybatis.board.domain.UserVO;
 import mybatis.board.mapper.UserMapper;
+
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +28,12 @@ public class UserServiceImpl implements UserService{
         this.userDao = userDao;
     }
 
-    @Override
+   @Override
     public List<UserVO> getBoardList(Criteria cri) throws Exception {
+
         return userDao.boardList(cri);
     }
+
 
     @Override
     public int listCount() throws Exception {
@@ -51,6 +57,17 @@ public class UserServiceImpl implements UserService{
         return userDao.updateViewCnt(id);
     }
 
+    @Override
+    public void deleteById(Long id) {
+        userDao.deleteById(id);
+    }
+
+    @Override
+    public void modifyBoard(UserVO userVO) {
+
+        userDao.modifyBoard(userVO);
+    }
+
 
     /**
      *검증코드 제목, 작성자 ,내용 중  NULL 값이나 , "" 빈문자열 올시 error 메세지 반환
@@ -61,6 +78,7 @@ public class UserServiceImpl implements UserService{
         for(FieldError error : errors.getFieldErrors()){
             String validKeyName = String.format("valid_%s", error.getField());
             validatorResult.put(validKeyName,error.getDefaultMessage());
+            System.out.println(validKeyName);
         }
 
         return validatorResult;
