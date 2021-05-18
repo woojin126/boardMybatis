@@ -3,13 +3,14 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/default}">
 
-<style>
-    .row > div{
-        display: flex;
-        justify-content: space-evenly;
+<head>
+    <style>
+        .btnList{
+            margin-top: 10px;
+        }
+    </style>
+</head>
 
-    }
-</style>
 
 <div class="container" layout:fragment="content">
 
@@ -21,6 +22,12 @@
         <label for="itemId">게시글 번호</label>
         <input type="text" id="itemId" name="itemId" class="form-control"
                value="1" th:value="${item.id}" readonly>
+    </div>
+    <div>
+        <label for="itemAuthor">작성자</label>
+        <input type="text" id="itemAuthor" name="itemAuthor" class="form-control"
+               value="1" th:value="${item.author}" readonly>
+
     </div>
     <div>
         <label for="itemTitle">제목</label>
@@ -38,21 +45,17 @@
                value="1" th:value="${item.recnt}" readonly>
     </div>
 
-    <div class="row">
-         <div class="delete">
+    <div class="btnList">
+        <span class="delete">
               <a class="btn btn-primary" th:href="@{/delete/{id}(id=${item.id})}" role="button">삭제</a>
-          </div>
-        <div class="list">
+        </span>
+        <span class="list">
               <a class="btn btn-primary" th:href="@{/list}" role="button">목록</a>
-        </div>
-        <div class="update">
-            <a class="btn btn-primary" th:href="@{/update}" role="button">수정</a>
-        </div>
+        </span>
+        <span class="update">
+            <a class="btn btn-primary" th:href="@{/modify/{id}(id=${item.id})}" role="button">수정</a>
+        </span>
     </div>
-</div>
-
-
-
 </div>
 
 </html>
