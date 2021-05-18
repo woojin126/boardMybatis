@@ -22,6 +22,7 @@
 
 
     </select>
+    <!--#{rowStart} AND #{rowEnd} -->
     <select id="listCount" resultType="int">
         SELECT count(id) FROM board where id > 0
     </select>
@@ -48,5 +49,17 @@
 
     <update id="updateViewCnt">
         UPDATE board set recnt = recnt + 1 where id=#{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from board where id=#{id}
+    </delete>
+
+    <update id="modifyBoard" parameterType="mybatis.board.domain.UserVO">
+        UPDATE board SET
+        title  = #{title},
+        content = #{content}
+        WHERE id=#{id}
+
     </update>
 </mapper>
