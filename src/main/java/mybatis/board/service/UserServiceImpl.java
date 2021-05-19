@@ -12,6 +12,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 
 
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,6 @@ public class UserServiceImpl implements UserService{
 
         return userDao.boardList(cri);
     }
-
 
     @Override
     public int listCount() throws Exception {
