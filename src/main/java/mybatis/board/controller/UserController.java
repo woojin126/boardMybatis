@@ -29,6 +29,7 @@ public class UserController {
         this.userServiceImpl = userServiceImpl;
     }
 
+
     @GetMapping("/list")
     public String list(Model model , Criteria cri) throws Exception
     {
@@ -38,6 +39,7 @@ public class UserController {
         PageMaker pageMaker = new PageMaker();
         pageMaker.setCri(cri);
         pageMaker.setTotalCount(userServiceImpl.listCount());
+
 
         model.addAttribute("pageMaker",pageMaker);
         return "board/list";
@@ -51,17 +53,7 @@ public class UserController {
     @PostMapping("/post")
     public String getPost(@ModelAttribute @Valid UserVO userVO, Errors errors, Model model){
 
-        if(errors.hasErrors())
-        {
-            model.addAttribute("userVO",userVO);
-            Map<String,String> validatorResult = userServiceImpl.validateHandling(errors);
-            for(String key: validatorResult.keySet())
-            {
-                model.addAttribute(key,validatorResult.get(key));
-            }
-
-            return "board/post";
-        }
+        if (valiationForm(userVO, errors, model, "userVO")) return "board/post";
 
         userServiceImpl.insertBoard(userVO);
         return "redirect:/list";
@@ -135,5 +127,39 @@ public class UserController {
         userServiceImpl.deleteById(id);
 
         return "redirect:/list";
+    }
+
+    @GetMapping("/modify/{id}")
+    public String modify(@PathVariable long id,Model model){
+
+        UserVO updateLine = userServiceImpl.findById(id);
+        model.addAttribute("updateLine",updateLine);
+
+
+        return "board/modify";
+    }
+
+    @PostMapping("/modify")
+    public String modifySet(@ModelAttribute @Valid UserVO userVO, Errors errors,Model model){
+
+        if (valiationForm(userVO, errors, model, "updateLine")) return "board/modify";
+
+        userServiceImpl.modifyBoard(userVO);
+
+        return "redirect:/list";
+
+    }
+
+    private boolean valiationForm(@ModelAttribute @Valid UserVO userVO, Errors errors, Model model, String updateLine) {
+        if (errors.hasErrors()) {
+            model.addAttribute(updateLine, userVO);
+            Map<String, String> validatorResult = userServiceImpl.validateHandling(errors);
+            for (String key : validatorResult.keySet()) {
+                model.addAttribute(key, validatorResult.get(key));
+            }
+
+            return true;
+        }
+        return false;
     }
 }
