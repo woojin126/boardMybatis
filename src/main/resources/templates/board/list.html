@@ -62,17 +62,22 @@
 
 
 
-
-  <div class="box-footer clearfix">
+<!--
+    <li th:each="idx,iterStat : ${#numbers.sequence(pageMaker.startPage,pageMaker.endPage)}"
+        th:classappend="${pageMaker.cri.page} == ${idx} ? active : null ">-->
+    <div class="box-footer clearfix">
         <ul class="pagination pagination-sm no-margin pull-right">
 
-            <li th:if="${pageMaker.prev} == false">
+
+            <li th:if="${pageMaker.prev} == true">
                 <a th:href="@{/list(page=${pageMaker.startPage}-1,perPageNum=${pageMaker.cri.perPageNum})}">&laquo;</a>
             </li>
 
-            <li th:each="idx,iterStat : ${#numbers.sequence(pageMaker.startPage,pageMaker.endPage)}"
-                th:classappend="${pageMaker.cri.page} == ${idx} ? active : null ">
+          <!--  <li th:each="idx,iterStat : ${#numbers.sequence(pageMaker.startPage,pageMaker.endPage)}">
                 <a th:href="@{/list(page=${idx},perPageNum=${pageMaker.cri.perPageNum})}" th:text="${idx}"></a>
+            </li>-->
+            <li th:each="idx,iterStat : ${#numbers.sequence(pageMaker.startPage,pageMaker.endPage)}">
+                <a th:with="link=|/list${pageMaker.makeQuery(idx)}|" th:href="@{${link}}" th:text="${idx}"> </a>
             </li>
 
             <li th:if="${pageMaker.next} == false and ${pageMaker.endPage > 0}">
@@ -82,12 +87,9 @@
         </ul>
 
     </div>
-
+<!--https://melonpeach.tistory.com/27 일다녀와서 이어서 -->
 <!--
 https://melonpeach.tistory.com/27?category=806570-->
 
 </div>
-
-
-
 </html>
