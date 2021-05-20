@@ -4,6 +4,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -13,15 +14,16 @@ import javax.validation.constraints.NotEmpty;
 
 @Setter @Getter
 public class UserVO {
-    
- 
+
+
     private Long id;
-    @NotEmpty @NotBlank(message = "작성자 입력하세요")
+    @NotBlank(message = "작성자 입력하세요")
     private String author;
-    @NotEmpty @NotBlank(message = "제목 입력하세요")
+    @NotBlank(message = "제목 입력하세요")
     private String title;
-    @NotEmpty @NotBlank(message = "내용 입력해주세요")
+    @NotBlank(message = "내용 입력해주세요")
     private String content;
+
     private String regdate;
     private int recnt;
 
