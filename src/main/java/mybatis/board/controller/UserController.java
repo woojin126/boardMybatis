@@ -3,6 +3,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import mybatis.board.domain.Criteria;
 import mybatis.board.domain.PageMaker;
+import mybatis.board.domain.SearchCriteria;
 import mybatis.board.domain.UserVO;
 import mybatis.board.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +32,15 @@ public class UserController {
 
 
     @GetMapping("/list")
-    public String list(Model model , Criteria cri) throws Exception
+    public String list(Model model , @ModelAttribute SearchCriteria scri) throws Exception
     {
-        List<UserVO> boardList = userServiceImpl.getBoardList(cri);
+        log.info("list");
+        List<UserVO> boardList = userServiceImpl.getBoardList(scri);
         model.addAttribute("boardList",boardList);
 
         PageMaker pageMaker = new PageMaker();
-        pageMaker.setCri(cri);
-        pageMaker.setTotalCount(userServiceImpl.listCount());
+        pageMaker.setCri(scri);
+        pageMaker.setTotalCount(userServiceImpl.listCount(scri));
 
 
         model.addAttribute("pageMaker",pageMaker);
