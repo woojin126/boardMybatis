@@ -2,6 +2,7 @@ package mybatis.board.service;
 
 
 import mybatis.board.domain.Criteria;
+import mybatis.board.domain.SearchCriteria;
 import mybatis.board.domain.UserVO;
 import mybatis.board.mapper.UserMapper;
 
@@ -30,16 +31,15 @@ public class UserServiceImpl implements UserService{
     }
 
    @Override
-    public List<UserVO> getBoardList(Criteria cri) throws Exception {
+    public List<UserVO> getBoardList(SearchCriteria scri) throws Exception {
 
-        return userDao.boardList(cri);
+        return userDao.boardList(scri);
     }
 
     @Override
-    public int listCount() throws Exception {
-        return userDao.listCount();
+    public int listCount(SearchCriteria scri) throws Exception {
+        return userDao.listCount(scri);
     }
-
 
     @Override
     public void insertBoard(UserVO userVO) {
