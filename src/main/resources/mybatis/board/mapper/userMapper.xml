@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mybatis.board.mapper.UserMapper">
+
+
+    <sql id="search">
+        <if test="searchType !=null">
+            <if test="searchType == 't'.toString()">AND TITLE LIKE '%' || #{keyword} || '%'</if>
+            <if test="searchType == 'w'.toString()">AND AUTHOR LIKE '%' || #{keyword} || '%'</if>
+            <if test="searchType == 'c'.toString()">AND CONTENT LIKE '%' || #{keyword} || '%'</if>
+            <if test="searchType == 'tc'.toString()">AND (TITLE LIKE '%' || #{keyword} || '%') OR (CONTENT LIKE '%' || #{keyword} || '%')</if>
+        </if>
+    </sql>
+
     <select id="boardList" resultType="mybatis.board.domain.UserVO">
         SELECT  id,
                 title,
@@ -16,15 +28,21 @@
                         regdate,
                         recnt,
                         ROW_NUMBER() OVER(ORDER BY id DESC) AS RNUM
-                 FROM board) MP
+                 FROM board WHERE 1=1
+                <include refid="search"></include>
+            ) MP
         WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
         ORDER BY id DESC
 
 
     </select>
+
     <!--#{rowStart} AND #{rowEnd} -->
-    <select id="listCount" resultType="int">
-        SELECT count(id) FROM board where id > 0
+    <select id="listCount" parameterType="mybatis.board.domain.SearchCriteria" resultType="int">
+        SELECT count(id) FROM board
+        where 1=1
+        <include refid="search"></include>
+        AND id > 0
     </select>
 
     <insert id="insertBoard">
@@ -39,8 +57,6 @@
                    #{author},
                    #{title},
                    #{content}
-
-
                )
     </insert>
     <select id="findByItem" resultType="mybatis.board.domain.UserVO">
