@@ -3,7 +3,6 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/default}">
 <head>
-
     <style>
         .box-footer{
             display: flex;
@@ -62,34 +61,74 @@
 
 
 
-<!--
-    <li th:each="idx,iterStat : ${#numbers.sequence(pageMaker.startPage,pageMaker.endPage)}"
-        th:classappend="${pageMaker.cri.page} == ${idx} ? active : null ">-->
+    <!--
+        <li th:each="idx,iterStat : ${#numbers.sequence(pageMaker.startPage,pageMaker.endPage)}"
+            th:classappend="${pageMaker.cri.page} == ${idx} ? active : null ">-->
     <div class="box-footer clearfix">
         <ul class="pagination pagination-sm no-margin pull-right">
 
 
             <li th:if="${pageMaker.prev} == true">
-                <a th:href="@{/list(page=${pageMaker.startPage}-1,perPageNum=${pageMaker.cri.perPageNum})}">&laquo;</a>
+                <a th:with="link=|/list${pageMaker.makeSearch(pageMaker.startPage - 1)}|" th:href="@{${link}}">&laquo;</a>
             </li>
 
-          <!--  <li th:each="idx,iterStat : ${#numbers.sequence(pageMaker.startPage,pageMaker.endPage)}">
-                <a th:href="@{/list(page=${idx},perPageNum=${pageMaker.cri.perPageNum})}" th:text="${idx}"></a>
-            </li>-->
             <li th:each="idx,iterStat : ${#numbers.sequence(pageMaker.startPage,pageMaker.endPage)}">
-                <a th:with="link=|/list${pageMaker.makeQuery(idx)}|" th:href="@{${link}}" th:text="${idx}"> </a>
+                <a th:with="link=|/list${pageMaker.makeSearch(idx)}|" th:href="@{${link}}" th:text="${idx}"> </a>
             </li>
 
             <li th:if="${pageMaker.next} == false and ${pageMaker.endPage > 0}">
-                <a th:href="@{/list(page=${pageMaker.endPage},perPageNum=${pageMaker.cri.perPageNum})}">&raquo;</a>
+                <a th:with="link=|/list${pageMaker.makeSearch(pageMaker.endPage)}|" th:href="@{${link}}">&raquo;</a>
             </li>
 
         </ul>
 
     </div>
-<!--https://melonpeach.tistory.com/27 일다녀와서 이어서 -->
-<!--
-https://melonpeach.tistory.com/27?category=806570-->
 
 </div>
+
+
+<!-- https://melonpeach.tistory.com/30?category=806570 현재내가하고잇는 게시판 -->
+<!--https://kogle.tistory.com/265 타임리프 셀럭트-->
+
+<form id="searchForm" th:action="@{/list}" method="get" class="form-horizontal" role="form">
+    <div class="form-group">
+        <select id="text" name="searchType" class="form-control">
+            <option value="" th:selected="${#strings.isEmpty(scri.searchType)}">전체</option>
+            <option value="t" th:selected="${#strings.equals(scri.searchType,'t')}">제목</option>
+            <option value="c" th:selected="${#strings.equals(scri.searchType,'c')}">내용</option>
+            <option value="w" th:selected="${#strings.equals(scri.searchType,'w')}">작성자</option>
+        </select>
+        <!--value 에입력한값의 키가 name이 되는것-->
+        <input type="test" name="keyword" id="keywordInput"  th:value="${scri.searchType}"/>
+        <button id="searchBtn" type="button" th:if="">검색</button>
+    </div>
+</form>
+<script>
+    $(document).ready(function (){
+        $("#searchBtn").click(function (){
+
+            str = "list"
+                + "${pageMaker.makeQuery(1)}"
+                + "&searchType="
+                + $("select option:selected").val()
+                + "&keyword="
+                + encodeURIComponent($('#keywordInput').val());
+            alert(str);
+            self.location = str;
+
+        });
+    });
+
+</script>
+
 </html>
+<!--    $("select option:selected").value()-->
+
+<!--
+let selectOption = document.getElementById("test").options.selectedIndex;
+ const btn = document.querySelector("#searchBtn");
+ btn.addEventListener('click',function(){
+     alert("하위");
+     self.location= "list" + '${pageMaker.makeQuery(1)}' + "&searchType=" + selectOption + "&keyword=" + encodeURIComponent($('#keywordInput').value());
+ });
+-->
