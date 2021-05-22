@@ -1,7 +1,5 @@
 package mybatis.board.controller;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import mybatis.board.domain.Criteria;
 import mybatis.board.domain.PageMaker;
 import mybatis.board.domain.SearchCriteria;
 import mybatis.board.domain.UserVO;
@@ -32,16 +30,15 @@ public class UserController {
 
 
     @GetMapping("/list")
-    public String list(Model model , @ModelAttribute SearchCriteria scri) throws Exception
+    public String list(Model model , @ModelAttribute("scri") SearchCriteria scri) throws Exception
     {
         log.info("list");
         List<UserVO> boardList = userServiceImpl.getBoardList(scri);
         model.addAttribute("boardList",boardList);
 
         PageMaker pageMaker = new PageMaker();
-        pageMaker.setCri(scri);
+        pageMaker.setSearchCriteria(scri);
         pageMaker.setTotalCount(userServiceImpl.listCount(scri));
-
 
         model.addAttribute("pageMaker",pageMaker);
         return "board/list";
