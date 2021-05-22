@@ -9,11 +9,12 @@
      <link href="../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 
  </head>
+ <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
 
 
 <body>
-
     <header th:replace="fragments/header :: header"></header>
+
 
     <div id="wrapper" class="wrapper">
         <div layout:fragment="content">
@@ -23,9 +24,5 @@
     </div>
 
     <footer th:replace="fragments/footer :: footer"></footer>
-
-
-
-
 </body>
 </html>
