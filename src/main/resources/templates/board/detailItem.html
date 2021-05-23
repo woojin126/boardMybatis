@@ -3,13 +3,39 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/default}">
 
-<head>
+<th:block layout:fragment="css">
+
     <style>
         .btnList{
             margin-top: 10px;
         }
+        .reply {
+            border-bottom: #4f5050;
+            font-family: 'Stylish', sans-serif;
+
+        }
+        ul{
+            padding: 0;
+            margin: 0;
+        }
+
+        .reply ul:first-child{
+            display: flex;
+            flex-direction: row;
+        }
+
+        .reply ul{
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+        }
+        .reply ul:nth-child(2){
+           border-bottom: 5px solid gray;
+        }
+
+
     </style>
-</head>
+</th:block>
 
 
 <div class="container" layout:fragment="content">
@@ -18,20 +44,23 @@
         <h2>게시글 상세</h2>
     </div>
 
-    <div>
-        <label for="itemId">게시글 번호</label>
-        <input type="text" id="itemId" name="itemId" class="form-control"
+
+      <div>
+         <label for="itemId">게시글 번호</label>
+         <input type="text" id="itemId" name="itemId" class="form-control"
                value="1" th:value="${item.id}" readonly>
-    </div>
+     </div>
+
     <div>
-        <label for="itemAuthor">작성자</label>
-        <input type="text" id="itemAuthor" name="itemAuthor" class="form-control"
+         <label for="itemAuthor">작성자</label>
+         <input type="text" id="itemAuthor" name="itemAuthor" class="form-control"
                value="1" th:value="${item.author}" readonly>
 
-    </div>
-    <div>
-        <label for="itemTitle">제목</label>
-        <input type="text" id="itemTitle" name="itemTitle" class="form-control"
+     </div>
+
+     <div>
+          <label for="itemTitle">제목</label>
+         <input type="text" id="itemTitle" name="itemTitle" class="form-control"
                value="1" th:value="${item.title}" readonly>
     </div>
     <div>
@@ -56,6 +85,23 @@
             <a class="btn btn-primary" th:href="@{/modify/{id}(id=${item.id})}" role="button">수정</a>
         </span>
     </div>
+
+
+    <div class="reply">
+        <div class="replyContainer" th:each="reply : ${replyList}">
+            <ul>
+                <li>작성자:</li>
+                <li th:text="${reply.author}">author</li>//
+                <li>등록일자:</li>
+                <li th:text="${reply.regdate}">regDate</li>
+            </ul>
+            <ul>
+                <li>내용</li>
+                <li th:text="${reply.content}">content</li>
+            </ul>
+        </div>
+    </div>
+
 </div>
 
 </html>
