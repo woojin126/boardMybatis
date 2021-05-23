@@ -4,13 +4,17 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns="http://www.w3.org/1999/xhtml">
 
- <head>
+<!--
+<head>
      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
      <link href="../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 
- </head>
- <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+</head>
+-->
 
+ <nav class="navbar navbar-inverse">
+     <a class="navbar-brand" th:href="@{/list}">Simple Board</a>
+ </nav>
 
 <body>
     <header th:replace="fragments/header :: header"></header>
