@@ -1,9 +1,9 @@
 package mybatis.board.mapper;
 
 
-import mybatis.board.domain.Criteria;
-import mybatis.board.domain.SearchCriteria;
-import mybatis.board.domain.UserVO;
+import mybatis.board.domain.reply.ReplyVO;
+import mybatis.board.domain.user.SearchCriteria;
+import mybatis.board.domain.user.UserVO;
 import org.apache.ibatis.annotations.Mapper;
 
 
@@ -15,10 +15,9 @@ public interface UserMapper {
 
     public List<UserVO> boardList(SearchCriteria scri) throws Exception;
     public int listCount(SearchCriteria scri) throws Exception;
-    public void insertBoard(UserVO userVO);
+    public int insertBoard(UserVO userVO);
     public UserVO findByItem(Long id);
     public int updateViewCnt(Long id);
     public void deleteById(long id);
     public void modifyBoard(UserVO userVO);
-
 }
