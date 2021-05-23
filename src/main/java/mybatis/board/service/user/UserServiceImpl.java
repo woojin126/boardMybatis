@@ -1,20 +1,13 @@
-package mybatis.board.service;
+package mybatis.board.service.user;
 
-
-import mybatis.board.domain.Criteria;
-import mybatis.board.domain.SearchCriteria;
-import mybatis.board.domain.UserVO;
+import mybatis.board.domain.reply.ReplyVO;
+import mybatis.board.domain.user.SearchCriteria;
+import mybatis.board.domain.user.UserVO;
 import mybatis.board.mapper.UserMapper;
-
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
-
-
-
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +19,7 @@ public class UserServiceImpl implements UserService{
     private UserMapper userDao;
 
     @Autowired
-    public UserServiceImpl(UserMapper userDao) {
+    public UserServiceImpl(UserMapper userDao ) {
         this.userDao = userDao;
     }
 
@@ -42,9 +35,9 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void insertBoard(UserVO userVO) {
+    public int insertBoard(UserVO userVO) {
 
-        userDao.insertBoard(userVO);
+        return userDao.insertBoard(userVO);
     }
 
     @Override
@@ -68,19 +61,22 @@ public class UserServiceImpl implements UserService{
         userDao.modifyBoard(userVO);
     }
 
-
     /**
      *검증코드 제목, 작성자 ,내용 중  NULL 값이나 , "" 빈문자열 올시 error 메세지 반환
      */
+    @Override
     public Map<String, String> validateHandling(Errors errors) {
-        Map<String,String> validatorResult = new HashMap<>();
 
-        for(FieldError error : errors.getFieldErrors()){
+        Map<String, String> validatorResult = new HashMap<>();
+
+        for (FieldError error : errors.getFieldErrors()) {
             String validKeyName = String.format("valid_%s", error.getField());
-            validatorResult.put(validKeyName,error.getDefaultMessage());
+            validatorResult.put(validKeyName, error.getDefaultMessage());
             System.out.println(validKeyName);
         }
 
         return validatorResult;
     }
+
+
 }
