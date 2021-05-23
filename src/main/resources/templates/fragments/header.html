@@ -4,8 +4,14 @@
 
 
 <header th:fragment="header">
-    <nav class="navbar navbar-inverse">
-        <a class="navbar-brand" th:href="@{/board/list}">Simple Board</a>
-    </nav>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Stylish&display=swap" rel="stylesheet">
+    <th:block layout:fragment="css"></th:block>
+    <th:block layout:fragment="script"></th:block>
+    </head>
 </header>
 </html>
