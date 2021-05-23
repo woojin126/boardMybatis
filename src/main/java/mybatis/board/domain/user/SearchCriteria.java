@@ -1,4 +1,4 @@
-package mybatis.board.domain;
+package mybatis.board.domain.user;
 
 public class SearchCriteria extends Criteria{
 
