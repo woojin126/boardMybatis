@@ -2,14 +2,25 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/default}">
-<head>
+
+
+<th:block layout:fragment="css">
     <style>
         .box-footer{
             display: flex;
             justify-content: center;
         }
+        #optionList{
+            width: 80px;
+            margin-right:5px;
+        }
+        .form-group{
+            display: flex;
+            flex-direction: row;
+        }
     </style>
-</head>
+</th:block>
+
 
 
 <div class="container" layout:fragment="content">
@@ -91,37 +102,39 @@
 <!--https://kogle.tistory.com/265 타임리프 셀럭트-->
 
     <div class="form-group">
-        <select id="text" name="searchType" class="form-control">
+        <select id="optionList" name="searchType" class="form-control">
             <option value="" th:selected="${#strings.isEmpty(scri.searchType)}">전체</option>
             <option value="t" th:selected="${#strings.equals(scri.searchType,'t')}">제목</option>
             <option value="c" th:selected="${#strings.equals(scri.searchType,'c')}">내용</option>
             <option value="w" th:selected="${#strings.equals(scri.searchType,'w')}">작성자</option>
         </select>
         <!--value 에입력한값의 키가 name이 되는것-->
-        <input type="test" name="keyword" id="keywordInput"  th:value="${scri.searchType}"/>
-        <button id="searchBtn" type="button">검색</button>
+        <input type="test"  name="keyword" id="keywordInput"  th:value="${scri.searchType}"/>
+        <button class="btn btn-primary" id="searchBtn" type="button">검색</button>
     </div>
 
-    <script th:inline="javascript">
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
 
-       let page = [[${pageMaker.makeQuery(1)}]]
-    $(document).ready(function (){
-        $("#searchBtn").click(function (){
+            let page = [[${pageMaker.makeQuery(1)}]]
+            $(document).ready(function () {
+                $("#searchBtn").click(function () {
 
-            str = "list"
-                + page
-                + "&searchType="
-                + $("select option:selected").val()
-                + "&keyword="
-                + encodeURIComponent($('#keywordInput').val());
-            alert(str);
-            self.location = str;
+                    str = "list"
+                        + page
+                        + "&searchType="
+                        + $("select option:selected").val()
+                        + "&keyword="
+                        + encodeURIComponent($('#keywordInput').val());
+                    alert(str);
+                    self.location = str;
 
-        });
-    });
+                });
+            });
 
 
-</script>
+        </script>
+    </th:block>
 </div>
 </html>
 <!--    $("select option:selected").value()-->
