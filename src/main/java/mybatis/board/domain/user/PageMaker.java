@@ -1,4 +1,4 @@
-package mybatis.board.domain;
+package mybatis.board.domain.user;
 
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -15,10 +15,10 @@ public class PageMaker{
     private boolean prev;
     private boolean next;
     private int displayPageNum = 10;
-    private Criteria cri;
+    private SearchCriteria cri;
 
-    public void setCri(Criteria cri) {
-        this.cri = cri;
+    public void setSearchCriteria(Criteria cri) {
+        this.cri = (SearchCriteria) cri;
     }
 
     public void setTotalCount(int totalCount) {
@@ -56,9 +56,9 @@ public class PageMaker{
 
     private void calcData() {
         endPage = (int) (Math.ceil(cri.getPage() / (double)displayPageNum) * displayPageNum);
-        System.out.println("cri.getPage : " + cri.getPage());
+ /*       System.out.println("cri.getPage : " + cri.getPage());
         System.out.println("displayPageNum : " + displayPageNum);
-        System.out.println(endPage);
+        System.out.println(endPage);*/
         startPage = (endPage - displayPageNum) + 1;
 
         int tempEndPage = (int) (Math.ceil(totalCount / (double)cri.getPerPageNum()));
@@ -66,10 +66,10 @@ public class PageMaker{
             endPage = tempEndPage;
         }
         prev = startPage == 1 ? false : true;
-        System.out.println("endPage : " + endPage);
+     /*   System.out.println("endPage : " + endPage);
         System.out.println("startPage : "  +startPage);
         System.out.println("cri.getPerPageNum() : " + cri.getPerPageNum());
-        System.out.println("totalCount : " + totalCount);
+        System.out.println("totalCount : " + totalCount);*/
         next = endPage * cri.getPerPageNum() >= totalCount ? false : true;
 
     }
@@ -91,8 +91,8 @@ public class PageMaker{
                 UriComponentsBuilder.newInstance()
                 .queryParam("page",page)
                 .queryParam("perPageNum",cri.getPerPageNum())
-                .queryParam("searchType",((SearchCriteria)cri).getSearchType())
-                .queryParam("keyword", encoding(((SearchCriteria)cri).getKeyword()))
+                .queryParam("searchType",(cri).getSearchType())
+                .queryParam("keyword", encoding((cri).getKeyword()))
                 .build();
         return uriComponents.toUriString();
     }
