@@ -1,4 +1,4 @@
-package mybatis.board.domain;
+package mybatis.board.domain.user;
 
 
 public class Criteria {
@@ -8,10 +8,12 @@ public class Criteria {
     private int rowStart;
     private int rowEnd;
 
+
     public Criteria(){
         this.page=1;
         this.perPageNum=10;
     }
+
 
     public int getPage() {
         return page;
@@ -39,6 +41,8 @@ public class Criteria {
             this.perPageNum = 10;
             return;
         }
+
+
         this.perPageNum = perPageNum;
     }
 
@@ -52,6 +56,7 @@ public class Criteria {
     }
 
     public int getRowEnd() {
+
         rowEnd = rowStart + perPageNum -1;
         return rowEnd;
     }
@@ -59,6 +64,8 @@ public class Criteria {
     public void setRowEnd(int rowEnd) {
         this.rowEnd = rowEnd;
     }
+
+
 
     @Override
     public String toString() {
