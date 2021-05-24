@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.board.mapper.ReplyMapper">
+    <select id="readReply" resultType="mybatis.board.domain.reply.ReplyVO">
+        SELECT
+                id,rno,content,author,regdate
+        FROM mp_reply
+        WHERE id=#{id}
+    </select>
+
+    <insert id="writeReply">
+        INSERT INTO MP_REPLY(
+                             id,
+                             rno,
+                             content,
+                             author
+        )
+        VALUES(#{id},
+               mp_reply_seq.nextval,
+               #{content},
+               #{author}
+               )
+    </insert>
+
+
+</mapper>
