@@ -6,12 +6,12 @@ import mybatis.board.domain.user.SearchCriteria;
 import mybatis.board.domain.user.UserVO;
 import mybatis.board.service.reply.ReplyService;
 import mybatis.board.service.user.UserService;
-import mybatis.board.service.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -70,13 +70,11 @@ public class UserController {
      */
     @GetMapping("/detailItem/{id}")
     public String editForm(@PathVariable Long id, Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        System.out.println("id:"+id);
+        System.out.println("idddd===="+id);
         UserVO item = userService.findById(id);
         List<ReplyVO> replyList = replyService.readReply(id);
-        for(ReplyVO list : replyList){
-            System.out.println("작성자"+list.getAuthor());
-            System.out.println("내용"+list.getContent());
-        }
+
+
         Cookie[] cookies = request.getCookies();
         Cookie viewCookie = null;
 
@@ -95,7 +93,6 @@ public class UserController {
         if(item != null)
         {
                 model.addAttribute("item",item);
-                log.info("item={}",item.getId());
                 if(viewCookie == null)
                 {
                     //System.out.println("쿠키가 없는 친구 었네?");
@@ -143,7 +140,6 @@ public class UserController {
         UserVO updateLine = userService.findById(id);
         model.addAttribute("updateLine",updateLine);
 
-
         return "board/modify";
     }
 
@@ -157,6 +153,17 @@ public class UserController {
         return "redirect:/list";
 
     }
+
+    @PostMapping("/replyWrite")
+    public String replyWrite(ReplyVO vo, SearchCriteria scri, RedirectAttributes rttr)throws Exception{
+        replyService.writeReply(vo);
+        rttr.addAttribute("replyList",vo.getId());
+
+        return "redirect:/detailItem/{replyList}";
+
+    }
+
+
 
     private boolean valiationForm(@ModelAttribute @Valid UserVO userVO, Errors errors, Model model, String updateLine) {
         if (errors.hasErrors()) {
