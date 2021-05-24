@@ -55,7 +55,6 @@
          <label for="itemAuthor">작성자</label>
          <input type="text" id="itemAuthor" name="itemAuthor" class="form-control"
                value="1" th:value="${item.author}" readonly>
-
      </div>
 
      <div>
@@ -102,6 +101,20 @@
         </div>
     </div>
 
+    <form th:action="@{/replyWrite}" method="post"  name="replyForm">
+        <input type="hidden" id="id" name="id" th:value="${item.id}" />
+        <div class="col-sm-10">
+            <input type="text" name="author" id="author">
+        </div>
+        <div class="col-sm-10">
+            <input type="text" name="content" id="content">
+        </div>
+        <button class="btn btn-primary"  role="button"></button>
+    </form>
 </div>
+<th:block layout:fragment="script">
+
+</th:block>
+
 
 </html>
