@@ -6,33 +6,33 @@
 <th:block layout:fragment="css">
 
     <style>
-        .btnList{
+
+        *{
+            font-family: 'Stylish', sans-serif;
+            list-style: none;
+        }
+        .btn-List{
             margin-top: 10px;
         }
         .reply {
             border-bottom: #4f5050;
-            font-family: 'Stylish', sans-serif;
-
         }
-        ul{
+
+        ul {
             padding: 0;
             margin: 0;
         }
-
-        .reply ul:first-child{
-            display: flex;
-            flex-direction: row;
+        #replyWrite {
+            margin-top: 10px;
         }
 
-        .reply ul{
-            list-style: none;
-            display: flex;
-            flex-direction: column;
+        #register{
+            margin-top: 10px;
         }
-        .reply ul:nth-child(2){
-           border-bottom: 5px solid gray;
-        }
-
+.replyContainer ul:first-child li{
+    display: flex;
+    flex-direction: row;
+}
 
     </style>
 </th:block>
@@ -44,77 +44,120 @@
         <h2>게시글 상세</h2>
     </div>
 
+   <!--/{id}(id=${item.id})-->
+    <form th:action="@{/delete}" th:method="post">
 
-      <div>
-         <label for="itemId">게시글 번호</label>
-         <input type="text" id="itemId" name="itemId" class="form-control"
-               value="1" th:value="${item.id}" readonly>
-     </div>
+        <div>
+            <label for="itemId">게시글 번호</label>
+            <input type="text" id="itemId" name="itemId" class="form-control"
+                   value="1" th:value="${item.id}" readonly>
+        </div>
 
-    <div>
-         <label for="itemAuthor">작성자</label>
-         <input type="text" id="itemAuthor" name="itemAuthor" class="form-control"
-               value="1" th:value="${item.author}" readonly>
-     </div>
+        <div>
+            <label for="itemAuthor">작성자</label>
+            <input type="text" id="itemAuthor" name="itemAuthor" class="form-control"
+                   value="1" th:value="${item.author}" readonly>
+        </div>
 
-     <div>
-          <label for="itemTitle">제목</label>
-         <input type="text" id="itemTitle" name="itemTitle" class="form-control"
-               value="1" th:value="${item.title}" readonly>
-    </div>
-    <div>
-        <label for="itemContent">내용</label>
-        <input type="text" id="itemContent" name="itemContent" class="form-control"
-               value="1" th:value="${item.content}" readonly>
-    </div>
-    <div>
-        <label for="itemreCnt">조회수</label>
-        <input type="text" id="itemreCnt" name="itemreCnt" class="form-control"
-               value="1" th:value="${item.recnt}" readonly>
-    </div>
+        <div>
+            <label for="itemTitle">제목</label>
+            <input type="text" id="itemTitle" name="itemTitle" class="form-control"
+                   value="1" th:value="${item.title}" readonly>
+        </div>
+        <div>
+            <label for="itemContent">내용</label>
+            <input type="text" id="itemContent" name="itemContent" class="form-control"
+                   value="1" th:value="${item.content}" readonly>
+        </div>
+        <div>
+            <label for="itemreCnt">조회수</label>
+            <input type="text" id="itemreCnt" name="itemreCnt" class="form-control"
+                   value="1" th:value="${item.recnt}" readonly>
+        </div>
 
-    <div class="btnList">
-        <span class="delete">
-              <a class="btn btn-primary" th:href="@{/delete/{id}(id=${item.id})}" role="button">삭제</a>
-        </span>
-        <span class="list">
-              <a class="btn btn-primary" th:href="@{/list}" role="button">목록</a>
-        </span>
-        <span class="update">
-            <a class="btn btn-primary" th:href="@{/modify/{id}(id=${item.id})}" role="button">수정</a>
-        </span>
-    </div>
+
+        <div class="btn-List">
+            <button class="btn btn-primary" role="button" type="submit">삭제</button>
+            <button class="btn btn-primary" th:href="@{/list}" role="button">목록</button>
+            <a class="btn btn-primary" th:href="@{/modify(id=${item.id})}" role="button">수정</a>
+                <!--"@{/modify{id}(id=${item.id})}"-->
+        </div>
+    </form>
+
 
 
     <div class="reply">
+        <form method="POST" th:action="@{deleteReply}">
         <div class="replyContainer" th:each="reply : ${replyList}">
+
+            <input type="hidden" name="id" id="idx" th:value="${reply.id}">
+            <input type="hidden" name="rno" id="rno" th:value="${reply.rno}">
             <ul>
-                <li>작성자:</li>
-                <li th:text="${reply.author}">author</li>//
-                <li>등록일자:</li>
+                <li>작성자</li>
+                <li th:text="${reply.author}">author</li>
+                <li>등록일자</li>
                 <li th:text="${reply.regdate}">regDate</li>
             </ul>
             <ul>
                 <li>내용</li>
                 <li th:text="${reply.content}">content</li>
             </ul>
+
+            <input class="btn btn-primary" id="deleteReply" type="submit" role="button" value="댓글삭제">
+            <a class="btn btn-primary" th:href="@{/modifyReply(rno=${reply.rno})}">댓글 수정</a>
+
         </div>
+        </form>
+
     </div>
 
-    <form th:action="@{/replyWrite}" method="post"  name="replyForm">
+
+
+    <form th:action="@{/replyWrite}" method="post"  name="replyForm" id="replyWrite">
         <input type="hidden" id="id" name="id" th:value="${item.id}" />
         <div class="col-sm-10">
-            <input type="text" name="author" id="author">
+            <input type="text" name="author" id="author" ><!--th:value="${replyVO?.author}"-->
+            <span th:text="${valid_author}"></span>
         </div>
         <div class="col-sm-10">
-            <input type="text" name="content" id="content">
+            <input type="text" name="content" id="content" ><!--th:value="${replyVO?.content}"-->
+            <span th:text="${valid_content}"></span>
         </div>
-        <button class="btn btn-primary"  role="button"></button>
+        <button class="btn btn-primary"  id="register" type="submit" role="button">등록</button>
     </form>
-</div>
-<th:block layout:fragment="script">
+<!--
+    <div class="replyBtnList" th:each="replyFunc : ${replyList}">
+        <span class="delete">
+              <a class="btn btn-primary" th:href="@{/deleteReply/{rno}(rno=${replyFunc.rno})}" role="button">삭제</a>
+        </span>
+       &lt;!&ndash; <span class="update">
+            <a class="btn btn-primary" th:href="@{/modify/{id}(id=${item.id})}" role="button">수정</a>
+        </span>&ndash;&gt;
+    </div>-->
 
-</th:block>
+    <th:block layout:fragment="script">
+       <!-- <script th:inline="javascript">
+
+              let id=
+                  $('#idx').val();
+              let rno=
+                  $('#rno').val();
+
+            $(document).ready(function () {
+                $("#deleteReply").click(function () {
+                    let str =
+                        "deleteReply?"+"rno="+rno
+                    location.href=str;
+
+
+                });
+            });
+-->
+
+        </script>
+    </th:block>
+</div>
+
 
 
 </html>
