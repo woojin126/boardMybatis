@@ -1,10 +1,9 @@
-package mybatis.board.domain;
+package mybatis.board.domain.user;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+
 
 
 /**
@@ -23,9 +22,9 @@ public class UserVO {
     private String title;
     @NotBlank(message = "내용 입력해주세요")
     private String content;
-
     private String regdate;
     private int recnt;
+
 
 
     @Override
@@ -39,6 +38,7 @@ public class UserVO {
                 ", recnt=" + recnt +
                 '}';
     }
+
 
 
 }
