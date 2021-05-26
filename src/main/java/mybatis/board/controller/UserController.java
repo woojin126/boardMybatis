@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,10 +66,15 @@ public class UserController {
 
     /**
      *게시글 새로고침시 조회수 무한증가 해결을 위해 cookie 사용
+     *     @GetMapping("/detailItem/{id}")
      */
-    @GetMapping("/detailItem/{id}")
-    public String editForm(@PathVariable Long id, Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        System.out.println("idddd===="+id);
+    @GetMapping("/detailItem")
+    public String editForm(@RequestParam Long id, @RequestParam(value = "valid_author", required = false) String valid_author
+            , @RequestParam(value = "valid_content", required = false) String valid_content
+            , Model model, HttpServletRequest request, HttpServletResponse response
+   ) throws Exception {
+
+
         UserVO item = userService.findById(id);
         List<ReplyVO> replyList = replyService.readReply(id);
 
@@ -118,6 +122,9 @@ public class UserController {
                     String value = viewCookie.getValue();
                     log.info("CookieValue={}",value);
                 }
+
+            model.addAttribute("valid_content",valid_content);
+            model.addAttribute("valid_author",valid_author);
                model.addAttribute("replyList",replyList);
                 return "board/detailItem";
         } else
@@ -127,15 +134,15 @@ public class UserController {
 
     }
 
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id){
-        userService.deleteById(id);
+    @PostMapping("/delete")
+    public String delete(@RequestParam Long itemId){
+        userService.deleteById(itemId);
 
         return "redirect:/list";
     }
-
-    @GetMapping("/modify/{id}")
-    public String modify(@PathVariable long id,Model model){
+/*"/modify/{id}"*/
+    @GetMapping("/modify")
+    public String modify(@RequestParam long id,Model model){
 
         UserVO updateLine = userService.findById(id);
         model.addAttribute("updateLine",updateLine);
@@ -143,31 +150,23 @@ public class UserController {
         return "board/modify";
     }
 
-    @PostMapping("/modify")
-    public String modifySet(@ModelAttribute @Valid UserVO userVO, Errors errors,Model model){
+   @PostMapping("/modify")
+   public String modifySet(@ModelAttribute @Valid UserVO userVO, Errors errors,Model model){
 
-        if (valiationForm(userVO, errors, model, "updateLine")) return "board/modify";
+       if (valiationForm(userVO, errors, model, "updateLine")) return "board/modify";
 
-        userService.modifyBoard(userVO);
+       userService.modifyBoard(userVO);
 
-        return "redirect:/list";
+       return "redirect:/list";
 
-    }
-
-    @PostMapping("/replyWrite")
-    public String replyWrite(ReplyVO vo, SearchCriteria scri, RedirectAttributes rttr)throws Exception{
-        replyService.writeReply(vo);
-        rttr.addAttribute("replyList",vo.getId());
-
-        return "redirect:/detailItem/{replyList}";
-
-    }
+   }
 
 
 
-    private boolean valiationForm(@ModelAttribute @Valid UserVO userVO, Errors errors, Model model, String updateLine) {
+
+    private boolean valiationForm(@ModelAttribute @Valid Object vo, Errors errors, Model model, String updateLine) {
         if (errors.hasErrors()) {
-            model.addAttribute(updateLine, userVO);
+            model.addAttribute(updateLine, vo);
             Map<String, String> validatorResult = userService.validateHandling(errors);
             for (String key : validatorResult.keySet()) {
                 model.addAttribute(key, validatorResult.get(key));
