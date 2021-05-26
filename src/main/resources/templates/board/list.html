@@ -6,6 +6,9 @@
 
 <th:block layout:fragment="css">
     <style>
+        *{
+            font-family: 'Stylish', sans-serif;
+        }
         .box-footer{
             display: flex;
             justify-content: center;
@@ -37,7 +40,8 @@
         <tbody>
         <tr class="text-center" th:each="post : ${boardList}">
             <th scope="row">
-                <a th:href="@{/detailItem/{id}(id=${post.id})}">
+                <!--       <a th:href="@{/detailItem/{id}(id=${post.id})}">-->
+                <a th:href="@{/detailItem(id=${post.id})}">
                     <span th:text="${post.id}"></span>
                 </a>
 
