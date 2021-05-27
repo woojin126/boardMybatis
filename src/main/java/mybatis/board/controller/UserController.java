@@ -58,6 +58,8 @@ public class UserController {
     @PostMapping("/post")
     public String getPost(@ModelAttribute @Valid UserVO userVO, Errors errors, Model model){
 
+        log.debug("UserVoId={}",userVO.getId());
+        log.debug("UserVoAuthor={}",userVO.getAuthor());
         if (valiationForm(userVO, errors, model, "userVO")) return "board/post";
 
         userService.insertBoard(userVO);
@@ -66,7 +68,7 @@ public class UserController {
 
     /**
      *게시글 새로고침시 조회수 무한증가 해결을 위해 cookie 사용
-     *     @GetMapping("/detailItem/{id}")
+     *
      */
     @GetMapping("/detailItem")
     public String editForm(@RequestParam Long id, @RequestParam(value = "valid_author", required = false) String valid_author
@@ -120,12 +122,12 @@ public class UserController {
                 {
                     System.out.println("이미 만들어져있는 쿠키가 있네요");
                     String value = viewCookie.getValue();
-                    log.info("CookieValue={}",value);
+                    log.debug("CookieValue={}",value);
                 }
 
             model.addAttribute("valid_content",valid_content);
             model.addAttribute("valid_author",valid_author);
-               model.addAttribute("replyList",replyList);
+            model.addAttribute("replyList",replyList);
                 return "board/detailItem";
         } else
         {
@@ -136,6 +138,7 @@ public class UserController {
 
     @PostMapping("/delete")
     public String delete(@RequestParam Long itemId){
+        log.debug("deleteById={}",itemId);
         userService.deleteById(itemId);
 
         return "redirect:/list";
@@ -143,7 +146,7 @@ public class UserController {
 /*"/modify/{id}"*/
     @GetMapping("/modify")
     public String modify(@RequestParam long id,Model model){
-
+        log.debug("modifyById={}",id);
         UserVO updateLine = userService.findById(id);
         model.addAttribute("updateLine",updateLine);
 
@@ -169,6 +172,7 @@ public class UserController {
             model.addAttribute(updateLine, vo);
             Map<String, String> validatorResult = userService.validateHandling(errors);
             for (String key : validatorResult.keySet()) {
+                log.debug("modifyFormErrorKey={}",key);
                 model.addAttribute(key, validatorResult.get(key));
             }
 
