@@ -23,5 +23,17 @@
                )
     </insert>
 
+    <delete id="deleteReply" parameterType="mybatis.board.domain.reply.ReplyVO">
+        DELETE FROM MP_REPLY where id=#{id}
+    </delete>
 
+    <select id="findById" resultType="mybatis.board.domain.reply.ReplyVO">
+        SELECT * FROM MP_REPLY where rno=#{rno}
+    </select>
+
+    <update id="modifyReply" parameterType="mybatis.board.domain.reply.ReplyVO">
+        UPDATE MP_REPLY SET author = #{author},
+                            content = #{content}
+        WHERE rno=#{rno}
+    </update>
 </mapper>
