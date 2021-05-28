@@ -10,4 +10,9 @@ public interface ReplyMapper {
     public List<ReplyVO> readReply(long id) throws Exception;
 
     public void writeReply(ReplyVO vo) throws Exception;
+
+    public void deleteReply(ReplyVO vo);
+
+    public ReplyVO findById(long rno);
+    void modifyReply(ReplyVO vo);
 }
