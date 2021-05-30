@@ -1,10 +1,15 @@
 <!DOCTYPE HTML>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/default}">
 
 <th:block layout:fragment="css">
     <style>
+
+        *{
+            font-family: 'Stylish', sans-serif;
+        }
         .button {
             display: flex;
             justify-content: space-between;
@@ -19,7 +24,7 @@
 
 
 <div class="container" layout:fragment="content">
-    <form th:action method="post">
+    <form th:action method="post" enctype="multipart/form-data">
         <div class="form-group row">
             <label for="inputTitle" class="col-sm-2 col-form-label"><strong>제목</strong></label>
             <div class="col-sm-10">
@@ -40,6 +45,12 @@
             <div class="col-sm-10">
                 <textarea type="text" name="content" class="form-control" id="inputContent"></textarea>
                 <span th:text="${valid_content}"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="inputContent" class="col-sm-2 col-form-label"><strong>이미지</strong></label>
+            <div class="col-sm-10">
+               <input type="file" name="file">
             </div>
         </div>
 
