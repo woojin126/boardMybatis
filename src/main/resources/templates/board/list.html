@@ -49,8 +49,9 @@
             <td>
                 <span th:text="${post.title}"></span>
             </td>
+            <!--     <a th:href="@{/detailItem/{id}(id=${post.id})}"> PathVariable 방식-->
             <td>
-                <a th:href="@{/detailItem/{id}(id=${post.id})}">
+                <a th:href="@{/detailItem/(id=${post.id})}">
                     <span th:text="${post.author}"></span>
                 </a>
             </td>
@@ -104,6 +105,7 @@
 
 <!-- https://melonpeach.tistory.com/30?category=806570 현재내가하고잇는 게시판 -->
 <!--https://kogle.tistory.com/265 타임리프 셀럭트-->
+    <!--https://shinsunyoung.tistory.com/78 스프링 시큐리티 로그인-->
 
     <div class="form-group">
         <select id="optionList" name="searchType" class="form-control">
