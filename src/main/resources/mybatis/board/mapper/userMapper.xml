@@ -15,6 +15,7 @@
         SELECT  id,
                 title,
                 content,
+
                 author,
                 regdate,
                 recnt
@@ -22,6 +23,7 @@
                  SELECT id,
                         title,
                         content,
+
                         author,
                         regdate,
                         recnt,
@@ -43,20 +45,55 @@
         AND id > 0
     </select>
 
-    <insert id="insertBoard" parameterType="mybatis.board.domain.user.UserVO">
-        INSERT INTO board(id,
+    <insert id="insertBoard" parameterType="mybatis.board.domain.user.UserVO" useGeneratedKeys="true" keyProperty="id">
+        <selectKey keyProperty="id" resultType="long" order="BEFORE">
+            SELECT board_sequence.nextval from dual
+        </selectKey>
+    INSERT INTO board(id,
                           author,
                           title,
                           content
-
         )
         VALUES (
-                   board_sequence.nextval,
+                   #{id},
                    #{author},
                    #{title},
                    #{content}
                )
     </insert>
+    <insert id="insertFile" parameterType="hashMap">
+        INSERT INTO MP_FILE(
+            FILE_NO,
+            id,
+            ORG_FILE_NAME,
+            STORED_FILE_NAME,
+            FILE_SIZE
+        )VALUES(
+                   SEQ_MP_FILE_NO.NEXTVAL,
+                   #{id},
+                   #{ORG_FILE_NAME , jdbcType=VARCHAR },
+                   #{STORED_FILE_NAME , jdbcType=VARCHAR },
+                   #{FILE_SIZE , jdbcType=VARCHAR }
+               )
+    </insert>
+
+    <select id="selectFileList" parameterType="long" resultType="hashMap">
+        select id,
+               FILE_NO,
+               ORG_FILE_NAME,
+               ROUND(FILE_SIZE/1024,1) AS FILE_SIZE
+        FROM MP_FILE
+        WHERE id=#{id}
+        AND   DEL_GB='N'
+    </select>
+    <select id="selectFileInfo" parameterType="hashMap" resultType="hashMap">
+        SELECT
+            STORED_FILE_NAME,
+            ORG_FILE_NAME
+        FROM MP_FILE
+        WHERE FILE_NO = #{FILE_NO}
+    </select>
+
     <select id="findByItem" resultType="mybatis.board.domain.user.UserVO">
         SELECT * FROM board where id=#{id}
     </select>
@@ -74,8 +111,8 @@
         title  = #{title},
         content = #{content}
         WHERE id=#{id}
-
     </update>
+
 
 
 </mapper>
