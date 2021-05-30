@@ -6,18 +6,24 @@ import mybatis.board.domain.user.SearchCriteria;
 import mybatis.board.domain.user.UserVO;
 import mybatis.board.service.reply.ReplyService;
 import mybatis.board.service.user.UserService;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.File;
+import java.net.URLEncoder;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
+/*https://melonpeach.tistory.com/51?category=806570 파일업로드 */
 
 @Slf4j
 @Controller
@@ -56,19 +62,20 @@ public class UserController {
     }
 
     @PostMapping("/post")
-    public String getPost(@ModelAttribute @Valid UserVO userVO, Errors errors, Model model){
+    public String getPost(@ModelAttribute @Valid UserVO userVO, Errors errors, Model model, MultipartHttpServletRequest mpReqeust) throws Exception {
 
         log.debug("UserVoId={}",userVO.getId());
         log.debug("UserVoAuthor={}",userVO.getAuthor());
         if (valiationForm(userVO, errors, model, "userVO")) return "board/post";
 
-        userService.insertBoard(userVO);
+
+
+        userService.insertBoard(userVO,mpReqeust);
         return "redirect:/list";
     }
 
     /**
      *게시글 새로고침시 조회수 무한증가 해결을 위해 cookie 사용
-     *
      */
     @GetMapping("/detailItem")
     public String editForm(@RequestParam Long id, @RequestParam(value = "valid_author", required = false) String valid_author
@@ -76,11 +83,10 @@ public class UserController {
             , Model model, HttpServletRequest request, HttpServletResponse response
    ) throws Exception {
 
-
         UserVO item = userService.findById(id);
         List<ReplyVO> replyList = replyService.readReply(id);
-
-
+        List<Map<String,Object>> fileList = userService.selectFileList(id);
+        model.addAttribute("file",fileList);
         Cookie[] cookies = request.getCookies();
         Cookie viewCookie = null;
 
@@ -101,7 +107,7 @@ public class UserController {
                 model.addAttribute("item",item);
                 if(viewCookie == null)
                 {
-                    //System.out.println("쿠키가 없는 친구 었네?");
+                    System.out.println("쿠키가 없는 친구 었네?");
 
                     Cookie newCookie = new Cookie("cookie"+id,"|"+id+"|");
 
@@ -128,12 +134,31 @@ public class UserController {
             model.addAttribute("valid_content",valid_content);
             model.addAttribute("valid_author",valid_author);
             model.addAttribute("replyList",replyList);
+            model.addAttribute("file",fileList);
                 return "board/detailItem";
         } else
         {
             return "board/detailItemError";
         }
 
+    }
+
+    @GetMapping("/fileDown")
+    public void fileDown(@RequestParam Map<String,Object> map,HttpServletResponse response) throws Exception{
+        Map<String,Object> resultMap = userService.selectFileInfo(map);
+        for (String s : resultMap.keySet()) {
+            System.out.println("files"+s);
+        }
+        String storeFileName = (String)resultMap.get("STORED_FILE_NAME");
+        String originalFileName = (String)resultMap.get("ORG_FILE_NAME");
+        System.out.println("storeFileName=========="+storeFileName);
+        byte fileByte[] = FileUtils.readFileToByteArray(new File("C:\\mp\\file\\"+storeFileName));
+        response.setContentType("application/octet-stream");
+        response.setContentLength(fileByte.length);
+        response.setHeader("Content-Disposition",  "attachment; fileName=\""+ URLEncoder.encode(originalFileName, "UTF-8")+"\";");
+        response.getOutputStream().write(fileByte);
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
     }
 
     @PostMapping("/delete")
@@ -143,7 +168,7 @@ public class UserController {
 
         return "redirect:/list";
     }
-/*"/modify/{id}"*/
+
     @GetMapping("/modify")
     public String modify(@RequestParam long id,Model model){
         log.debug("modifyById={}",id);
