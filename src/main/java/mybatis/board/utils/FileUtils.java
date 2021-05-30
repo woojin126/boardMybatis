@@ -1,5 +1,6 @@
 package mybatis.board.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import mybatis.board.domain.user.UserVO;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,6 +9,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import java.util.*;
 import java.io.File;
 
+@Slf4j
 @Component("fileUtils")
 public class FileUtils {
     private static  final String filePath= "C:\\mp\\file\\";
@@ -44,10 +46,16 @@ public class FileUtils {
                 multipartFile.transferTo(file);
                 listMap = new HashMap<String,Object>();
                 listMap.put("id",id);
+                log.debug("FileUtilsId={}",listMap.get("id"));
                 listMap.put("ORG_FILE_NAME",originalFileName);
+                log.debug("ORG_FILE_NAME={}",listMap.get("ORG_FILE_NAME"));
                 listMap.put("STORED_FILE_NAME",storedFileName);
+                log.debug("STORED_FILE_NAME={}",listMap.get("STORED_FILE_NAME"));
                 listMap.put("FILE_SIZE",multipartFile.getSize());
+                log.debug("FILE_SIZE={}",listMap.get("FILE_SIZE"));
+
                 list.add(listMap);
+
             }
         }
         return list;
