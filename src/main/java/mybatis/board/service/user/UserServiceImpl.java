@@ -1,26 +1,31 @@
 package mybatis.board.service.user;
 
+import lombok.extern.slf4j.Slf4j;
 import mybatis.board.domain.reply.ReplyVO;
 import mybatis.board.domain.user.SearchCriteria;
 import mybatis.board.domain.user.UserVO;
 import mybatis.board.mapper.UserMapper;
+import mybatis.board.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService{
-
+    private FileUtils fileUtils;
     private UserMapper userDao;
 
     @Autowired
-    public UserServiceImpl(UserMapper userDao ) {
+    public UserServiceImpl(UserMapper userDao,FileUtils fileUtils ) {
         this.userDao = userDao;
+        this.fileUtils=fileUtils;
     }
 
    @Override
@@ -35,10 +40,20 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public int insertBoard(UserVO userVO) {
+    public void insertBoard(UserVO userVO, MultipartHttpServletRequest mpRequest) throws Exception {
 
-        return userDao.insertBoard(userVO);
+        userDao.insertBoard(userVO);
+
+        List<Map<String,Object>> list = fileUtils.parseInsertFileInfo(userVO, mpRequest);
+        int size = list.size();
+        for(int i=0; i<size; i++){
+            log.debug("fileUtilsList={}",list.get(i));
+           userDao.insertFile(list.get(i));
+        }
+
     }
+
+
 
     @Override
     public UserVO findById(Long id) {
@@ -59,6 +74,16 @@ public class UserServiceImpl implements UserService{
     public void modifyBoard(UserVO userVO) {
 
         userDao.modifyBoard(userVO);
+    }
+
+    @Override
+    public List<Map<String, Object>> selectFileList(long id) throws Exception {
+        return userDao.selectFileList(id);
+    }
+
+    @Override
+    public Map<String, Object> selectFileInfo(Map<String, Object> map) throws Exception {
+        return userDao.selectFileInfo(map);
     }
 
     /**
