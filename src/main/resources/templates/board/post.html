@@ -50,9 +50,10 @@
         <div class="form-group row">
             <label for="inputContent" class="col-sm-2 col-form-label"><strong>이미지</strong></label>
             <div class="col-sm-10">
-               <input type="file" name="file">
+                <span id="fileIndex"></span>
             </div>
         </div>
+        <button class="fileAdd_btn" type="button">파일추가</button>
 
 
         <div class="button">
@@ -62,6 +63,7 @@
                     <input class="btn btn-primary" type="submit" role="button" value="글쓰기">
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-auto mr-auto"></div>
                 <div class="col-auto">
@@ -72,6 +74,23 @@
         </div>
     </form>
 
+    <th:block layout:fragment="script">
+        <script type="text/javascript">
+``
+                let fileIndex = 1;
+                $(".fileAdd_btn").on("click", function(){
+                    $("#fileIndex").append("<div><input type='file' style='float:left;' name='file_"+(fileIndex++)+"'>"+"</button>"+"<button type='button' style='float:right;' id='fileDelBtn'>"+"삭제"+"</button></div>");
+                });
+                $(document).on("click","#fileDelBtn", function(){
+                    $(this).parent().remove();
+
+                });
+
+        </script>
+    </th:block>
+
 </div>
+
+
 
 </html>
