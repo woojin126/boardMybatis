@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/default}">
 
@@ -74,15 +75,19 @@
             <input type="text" id="itemreCnt" name="itemreCnt" class="form-control"
                    value="1" th:value="${item.recnt}" readonly>
         </div>
+        <div th:each="files : ${file}">
+            <a th:href="@{/fileDown(FILE_NO=${files.FILE_NO})}">[[${files.ORG_FILE_NAME}]]</a>[[${files.FILE_SIZE}]]kb<br>
+        </div>
 
 
         <div class="btn-List">
             <button class="btn btn-primary" role="button" type="submit">삭제</button>
             <button class="btn btn-primary" th:href="@{/list}" role="button">목록</button>
             <a class="btn btn-primary" th:href="@{/modify(id=${item.id})}" role="button">수정</a>
-                <!--"@{/modify{id}(id=${item.id})}"-->
         </div>
     </form>
+
+
 
 
 
@@ -125,36 +130,9 @@
         </div>
         <button class="btn btn-primary"  id="register" type="submit" role="button">등록</button>
     </form>
-<!--
-    <div class="replyBtnList" th:each="replyFunc : ${replyList}">
-        <span class="delete">
-              <a class="btn btn-primary" th:href="@{/deleteReply/{rno}(rno=${replyFunc.rno})}" role="button">삭제</a>
-        </span>
-       &lt;!&ndash; <span class="update">
-            <a class="btn btn-primary" th:href="@{/modify/{id}(id=${item.id})}" role="button">수정</a>
-        </span>&ndash;&gt;
-    </div>-->
+
 
     <th:block layout:fragment="script">
-       <!-- <script th:inline="javascript">
-
-              let id=
-                  $('#idx').val();
-              let rno=
-                  $('#rno').val();
-
-            $(document).ready(function () {
-                $("#deleteReply").click(function () {
-                    let str =
-                        "deleteReply?"+"rno="+rno
-                    location.href=str;
-
-
-                });
-            });
--->
-
-        </script>
     </th:block>
 </div>
 
