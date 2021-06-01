@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/default}">
 
@@ -11,6 +12,7 @@
         .btnList {
             display: flex;
             flex-direction: row;
+            position: absolute; right: 0px; bottom:0px;
         }
 
         .list {
@@ -19,13 +21,18 @@
     </style>
 </th:block>
 
+
 <div class="container" layout:fragment="content">
 
     <div class="py-5 text-center">
         <h2>수정 폼</h2>
     </div>
 
-    <form th:action="@{/modify}" method="post">
+    <form th:action="@{/modify}" method="post" enctype="multipart/form-data">
+        <div>
+            <input type="hidden" id="fileNoDel" name="fileNoDel[]" value="">
+            <input type="hidden" id="fileNameDel" name="fileNameDel[]" value="">
+        </div>
         <div>
             <label for="id">게시글 번호</label><input type="text" id="id" name="id" class="form-control"
                                                  value="1" th:value="*{updateLine?.id}" readonly>
@@ -53,16 +60,65 @@
             <input type="text" id="recnt" name="recnt" class="form-control"
                    value="1" th:value="*{updateLine?.recnt}" readonly>
         </div>
+        <div id="fileIndex">
+            <div th:each="files, iStat : ${file}">
+                <input type="hidden" id="FILE_NO" th:name="'FILE_NO_'+${iStat.index}" th:value="${files.FILE_NO}">
+                <input type="hidden" id="FILE_NAME" name="FILE_NAME" th:value="|FILE_NO_${iStat.index}|">
+                <a href="#" id="fileName" onclick="return false;">[[${files.ORG_FILE_NAME}]]</a>[[${files.FILE_SIZE}]]kb
+                <button id="fileDel"  th:onclick="|fn_del(${files.FILE_NO},FILE_NO_${iStat.index})|" type="button">삭제</button>
+            </div>
+        </div>
 
+<!--th:onclick="|javascript:fn_del(${files.FILE_NO},FILE_NO_${iStat.index})|"-->
         <div class="btnList">
             <input class="btn btn-primary" type="submit" id="updateBtn" name="updateBtn" value="수정">
+            <button type="button" class="cancel_btn">취소</button>
+            <button type="button" class="fileAdd_btn">파일추가</button>
 
             <span class="list">
                  <a class="btn btn-primary" th:href="@{/list}" role="button">목록</a>
-              </span>
+            </span>
         </div>
     </form>
 
+    <th:block layout:fragment="script">
+        <script th:inline="javascript" type="text/javascript">
+            $(document).ready(function(){
+                $(document).on("click","#fileDel", function(){
+                    $(this).parent().remove();
+                });
+
+
+                fn_addFile();
+            });
+
+            function fn_addFile(){
+                let fileIndex = 1;
+
+
+                $(".fileAdd_btn").on("click", function(){
+                    $("#fileIndex").append("<div><input type='file' style='float:left;' name='file_"+(fileIndex++)+"'>"+"</button>"+"<button type='button' style='float:right;' id='fileDelBtn'>"+"삭제"+"</button></div>");
+                });
+
+
+                $(document).on("click","#fileDelBtn",function(){
+                    $(this).parent().remove();
+                })
+            }
+            let fileNoArry = new Array();
+            let fileNameArry = new Array();
+
+            function fn_del(value, name){
+                console.log(value);
+                console.log(name);
+                fileNoArry.push(value);
+                fileNameArry.push(name);
+
+                $("#fileNoDel").attr("value", fileNoArry);
+                $("#fileNameDel").attr("value", fileNameArry);
+            }
+        </script>
+    </th:block>
 
 </div>
 
