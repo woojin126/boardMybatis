@@ -62,7 +62,7 @@ public class UserController {
     }
 
     @PostMapping("/post")
-    public String getPost(@ModelAttribute @Valid UserVO userVO, Errors errors, Model model, MultipartHttpServletRequest mpReqeust) throws Exception {
+    public String getPost(@ModelAttribute @Valid UserVO userVO, Errors errors, Model model,String[] files,String[] fileNames, MultipartHttpServletRequest mpReqeust) throws Exception {
 
         log.debug("UserVoId={}",userVO.getId());
         log.debug("UserVoAuthor={}",userVO.getAuthor());
@@ -70,7 +70,7 @@ public class UserController {
 
 
 
-        userService.insertBoard(userVO,mpReqeust);
+        userService.insertBoard(userVO,files,fileNames,mpReqeust);
         return "redirect:/list";
     }
 
@@ -81,113 +81,110 @@ public class UserController {
     public String editForm(@RequestParam Long id, @RequestParam(value = "valid_author", required = false) String valid_author
             , @RequestParam(value = "valid_content", required = false) String valid_content
             , Model model, HttpServletRequest request, HttpServletResponse response
-   ) throws Exception {
+    ) throws Exception {
 
         UserVO item = userService.findById(id);
         List<ReplyVO> replyList = replyService.readReply(id);
-        List<Map<String,Object>> fileList = userService.selectFileList(id);
-        model.addAttribute("file",fileList);
+        List<Map<String, Object>> fileList = userService.selectFileList(id);
         Cookie[] cookies = request.getCookies();
         Cookie viewCookie = null;
 
-        if(cookies !=null && cookies.length>0)
-        {
-            for(int i=0;i<cookies.length;i++)
-            {
-                if(cookies[i].getName().equals("cookie"+id))
-                {
+        if (cookies != null && cookies.length > 0) {
+            for (int i = 0; i < cookies.length; i++) {
+                if (cookies[i].getName().equals("cookie" + id)) {
                     //System.out.println("기존에 있는 쿠키");
                     viewCookie = cookies[i];
                 }
             }
         }
 
-        if(item != null)
-        {
-                model.addAttribute("item",item);
-                if(viewCookie == null)
-                {
-                    System.out.println("쿠키가 없는 친구 었네?");
+        if (item != null) {
+            model.addAttribute("item", item);
+            if (viewCookie == null) {
+                System.out.println("쿠키가 없는 친구 었네?");
 
-                    Cookie newCookie = new Cookie("cookie"+id,"|"+id+"|");
+                Cookie newCookie = new Cookie("cookie" + id, "|" + id + "|");
 
-                    response.addCookie(newCookie);
+                response.addCookie(newCookie);
 
-                    int result = userService.updateViewCnt(id);
+                int result = userService.updateViewCnt(id);
 
-                    if(result > 0)
-                    {
-                        System.out.println("조회수 증가");
-                    }
-                    else
-                    {
-                        System.out.println("조회 에러");
-                    }
+                if (result > 0) {
+                    System.out.println("조회수 증가");
+                } else {
+                    System.out.println("조회 에러");
                 }
-                else
-                {
-                    System.out.println("이미 만들어져있는 쿠키가 있네요");
-                    String value = viewCookie.getValue();
-                    log.debug("CookieValue={}",value);
-                }
+            } else {
+                System.out.println("이미 만들어져있는 쿠키가 있네요");
+                String value = viewCookie.getValue();
+                log.debug("CookieValue={}", value);
+            }
 
-            model.addAttribute("valid_content",valid_content);
-            model.addAttribute("valid_author",valid_author);
-            model.addAttribute("replyList",replyList);
-            model.addAttribute("file",fileList);
-                return "board/detailItem";
-        } else
-        {
+            model.addAttribute("valid_content", valid_content);
+            model.addAttribute("valid_author", valid_author);
+            model.addAttribute("replyList", replyList);
+            model.addAttribute("file", fileList);
+            return "board/detailItem";
+        } else {
             return "board/detailItemError";
         }
 
     }
 
     @GetMapping("/fileDown")
-    public void fileDown(@RequestParam Map<String,Object> map,HttpServletResponse response) throws Exception{
-        Map<String,Object> resultMap = userService.selectFileInfo(map);
+    public void fileDown(@RequestParam Map<String, Object> map, HttpServletResponse response) throws Exception {
+        Map<String, Object> resultMap = userService.selectFileInfo(map);
         for (String s : resultMap.keySet()) {
-            System.out.println("files"+s);
+            System.out.println("files" + s);
         }
-        String storeFileName = (String)resultMap.get("STORED_FILE_NAME");
-        String originalFileName = (String)resultMap.get("ORG_FILE_NAME");
-        System.out.println("storeFileName=========="+storeFileName);
-        byte fileByte[] = FileUtils.readFileToByteArray(new File("C:\\mp\\file\\"+storeFileName));
+        String storeFileName = (String) resultMap.get("STORED_FILE_NAME");
+        String originalFileName = (String) resultMap.get("ORG_FILE_NAME");
+        System.out.println("storeFileName==========" + storeFileName);
+        byte fileByte[] = FileUtils.readFileToByteArray(new File("C:\\mp\\file\\" + storeFileName));
         response.setContentType("application/octet-stream");
         response.setContentLength(fileByte.length);
-        response.setHeader("Content-Disposition",  "attachment; fileName=\""+ URLEncoder.encode(originalFileName, "UTF-8")+"\";");
+        response.setHeader("Content-Disposition", "attachment; fileName=\"" + URLEncoder.encode(originalFileName, "UTF-8") + "\";");
         response.getOutputStream().write(fileByte);
         response.getOutputStream().flush();
         response.getOutputStream().close();
     }
 
     @PostMapping("/delete")
-    public String delete(@RequestParam Long itemId){
-        log.debug("deleteById={}",itemId);
+    public String delete(@RequestParam Long itemId) {
+        log.debug("deleteById={}", itemId);
         userService.deleteById(itemId);
 
         return "redirect:/list";
     }
 
     @GetMapping("/modify")
-    public String modify(@RequestParam long id,Model model){
-        log.debug("modifyById={}",id);
+    public String modify(@RequestParam long id, Model model) throws Exception {
+        log.debug("modifyById={}", id);
         UserVO updateLine = userService.findById(id);
-        model.addAttribute("updateLine",updateLine);
+        model.addAttribute("updateLine", updateLine);
+
+        List<Map<String, Object>> fileList = userService.selectFileList(id);
+        model.addAttribute("file", fileList);
 
         return "board/modify";
     }
 
-   @PostMapping("/modify")
-   public String modifySet(@ModelAttribute @Valid UserVO userVO, Errors errors,Model model){
+    @PostMapping("/modify")
+    public String modifySet(@ModelAttribute @Valid UserVO userVO,
+                            Errors errors,
+                            @RequestParam(value="fileNoDel[]") String[] files,
+                            @RequestParam(value="fileNameDel[]") String[] fileNames,
+                            MultipartHttpServletRequest mpRequest,
+                            Model model) throws Exception {
 
-       if (valiationForm(userVO, errors, model, "updateLine")) return "board/modify";
+        if (valiationForm(userVO, errors, model, "updateLine")) return "board/modify";
+        log.debug("filesMan={}",files);
+        log.debug("fileNamesMan={}",fileNames);
+        userService.modifyBoard(userVO,files,fileNames,mpRequest);
 
-       userService.modifyBoard(userVO);
+        return "redirect:/list";
 
-       return "redirect:/list";
-
-   }
+    }
 
 
 
