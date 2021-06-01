@@ -24,4 +24,5 @@ public interface UserMapper {
     void insertFile(Map<String, Object> map) throws Exception;
     List<Map<String,Object>> selectFileList(long id) throws Exception;
     Map<String,Object> selectFileInfo(Map<String,Object> map)throws Exception;
+    void updateFile(Map<String,Object> map) throws Exception;
 }
