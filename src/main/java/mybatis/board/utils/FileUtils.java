@@ -14,7 +14,7 @@ import java.io.File;
 public class FileUtils {
     private static  final String filePath= "C:\\mp\\file\\";
 
-    public List<Map<String,Object>> parseInsertFileInfo(UserVO userVO,
+    public List<Map<String,Object>> parseInsertFileInfo(UserVO userVO,String[] files,String[] fileNames,
                                                         MultipartHttpServletRequest mpRequest)throws Exception{
 
         Iterator<String> iterator = mpRequest.getFileNames();
@@ -33,11 +33,13 @@ public class FileUtils {
             file.mkdir();
         }
 
+
         while(iterator.hasNext())
         {
             multipartFile = mpRequest.getFile(iterator.next());
             if(multipartFile.isEmpty() == false)
             {
+
                 originalFileName = multipartFile.getOriginalFilename();
                 originalFileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
                 storedFileName = getRandomString() + originalFileExtension;
@@ -45,6 +47,7 @@ public class FileUtils {
                 file = new File(filePath + storedFileName);
                 multipartFile.transferTo(file);
                 listMap = new HashMap<String,Object>();
+                listMap.put("IS_NEW","Y");
                 listMap.put("id",id);
                 log.debug("FileUtilsId={}",listMap.get("id"));
                 listMap.put("ORG_FILE_NAME",originalFileName);
@@ -56,6 +59,15 @@ public class FileUtils {
 
                 list.add(listMap);
 
+            }
+        }
+        if(files !=null && fileNames !=null){
+            for(int i=0; i<fileNames.length;i++){
+                listMap = new HashMap<String,Object>();
+                listMap.put("IS_NEW","N");
+                listMap.put("FILE_NO",files[i]);
+
+                list.add(listMap);
             }
         }
         return list;
