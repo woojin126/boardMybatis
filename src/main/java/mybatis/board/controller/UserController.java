@@ -13,14 +13,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
 import java.net.URLEncoder;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 /*https://melonpeach.tistory.com/51?category=806570 파일업로드 */
@@ -66,11 +64,13 @@ public class UserController {
 
         log.debug("UserVoId={}",userVO.getId());
         log.debug("UserVoAuthor={}",userVO.getAuthor());
+
         if (valiationForm(userVO, errors, model, "userVO")) return "board/post";
 
-
-
         userService.insertBoard(userVO,files,fileNames,mpReqeust);
+
+
+
         return "redirect:/list";
     }
 
@@ -78,11 +78,14 @@ public class UserController {
      *게시글 새로고침시 조회수 무한증가 해결을 위해 cookie 사용
      */
     @GetMapping("/detailItem")
-    public String editForm(@RequestParam Long id, @RequestParam(value = "valid_author", required = false) String valid_author
-            , @RequestParam(value = "valid_content", required = false) String valid_content
+    public String editForm(@RequestParam Long id, @RequestParam(value = "valid_author", required = true) String valid_author
+            , @RequestParam(value = "valid_content", required = true) String valid_content
             , Model model, HttpServletRequest request, HttpServletResponse response
     ) throws Exception {
 
+        if(id == null){
+            throw new NullPointerException("해당하는 값이없습니다");
+        }
         UserVO item = userService.findById(id);
         List<ReplyVO> replyList = replyService.readReply(id);
         List<Map<String, Object>> fileList = userService.selectFileList(id);
@@ -101,7 +104,7 @@ public class UserController {
         if (item != null) {
             model.addAttribute("item", item);
             if (viewCookie == null) {
-                System.out.println("쿠키가 없는 친구 었네?");
+                log.debug("don't have cookie={}", (Object) null);
 
                 Cookie newCookie = new Cookie("cookie" + id, "|" + id + "|");
 
@@ -152,14 +155,23 @@ public class UserController {
     @PostMapping("/delete")
     public String delete(@RequestParam Long itemId) {
         log.debug("deleteById={}", itemId);
+
+        if(itemId == null){
+            throw new NullPointerException("해당하는 값이 없습니다");
+        }
         userService.deleteById(itemId);
 
         return "redirect:/list";
     }
 
     @GetMapping("/modify")
-    public String modify(@RequestParam long id, Model model) throws Exception {
+    public String modify(@RequestParam Long id, Model model) throws Exception {
         log.debug("modifyById={}", id);
+
+
+        if(id == null){
+            throw new NullPointerException("해당하는 값이 없습니다");
+        }
         UserVO updateLine = userService.findById(id);
         model.addAttribute("updateLine", updateLine);
 
