@@ -13,5 +13,5 @@ public interface ReplyService {
     public void deleteReply(ReplyVO vo);
     public Map<String, String> validateHandling(Errors errors);
     public ReplyVO findById(long rno);
-    void modifyReply(ReplyVO vo);
+    int modifyReply(ReplyVO vo);
 }
