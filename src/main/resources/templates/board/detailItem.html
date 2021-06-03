@@ -92,7 +92,7 @@
 
 
     <div class="reply">
-        <form method="POST" th:action="@{deleteReply}">
+        <form method="POST" th:action="@{/deleteReply}">
         <div class="replyContainer" th:each="reply : ${replyList}">
 
             <input type="hidden" name="id" id="idx" th:value="${reply.id}">
