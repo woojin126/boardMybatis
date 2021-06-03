@@ -75,7 +75,7 @@
     </form>
 
     <th:block layout:fragment="script">
-        <script type="text/javascript">
+        <script type="text/javascript" th:inline="javascript">
 ``
                 let fileIndex = 1;
                 $(".fileAdd_btn").on("click", function(){
