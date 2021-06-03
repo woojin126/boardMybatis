@@ -40,8 +40,9 @@ public class ReplyServiceImpl implements ReplyService{
     }
 
     @Override
-    public void modifyReply(ReplyVO vo) {
-        replyMapper.modifyReply(vo);
+    public int modifyReply(ReplyVO vo) {
+
+        return replyMapper.modifyReply(vo);
     }
 
 
