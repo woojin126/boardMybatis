@@ -17,6 +17,12 @@ public class ReplyVO {
     private String author;
     private String regdate;
 
+    public ReplyVO(Long id, Long rno, @NotBlank String content, @NotBlank String author) {
+        this.id = id;
+        this.rno=rno;
+        this.content = content;
+        this.author = author;
+    }
 
     @Override
     public String toString() {
