@@ -24,7 +24,7 @@
     </insert>
 
     <delete id="deleteReply" parameterType="mybatis.board.domain.reply.ReplyVO">
-        DELETE FROM MP_REPLY where id=#{id}
+        DELETE FROM MP_REPLY where rno=#{rno}
     </delete>
 
     <select id="findById" resultType="mybatis.board.domain.reply.ReplyVO">
