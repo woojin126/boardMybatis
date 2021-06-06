@@ -2,124 +2,48 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mybatis.board.mapper.UserMapper">
-    <sql id="search">
-        <if test="searchType !=null">
-            <if test="searchType == 't'.toString()">AND TITLE LIKE '%' || #{keyword} || '%'</if>
-            <if test="searchType == 'w'.toString()">AND AUTHOR LIKE '%' || #{keyword} || '%'</if>
-            <if test="searchType == 'c'.toString()">AND CONTENT LIKE '%' || #{keyword} || '%'</if>
-            <if test="searchType == 'tc'.toString()">AND (TITLE LIKE '%' || #{keyword} || '%') OR (CONTENT LIKE '%' || #{keyword} || '%')</if>
-        </if>
-    </sql>
-
-    <select id="boardList" resultType="mybatis.board.domain.user.UserVO">
-        SELECT  id,
-                title,
-                content,
-
-                author,
-                regdate,
-                recnt
-        FROM (
-                 SELECT id,
-                        title,
-                        content,
-
-                        author,
-                        regdate,
-                        recnt,
-                        ROW_NUMBER() OVER(ORDER BY id DESC) AS RNUM
-                 FROM board WHERE 1=1
-                <include refid="search"></include>
-            ) MP
-        WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
-        ORDER BY id DESC
-
-
+<!--users as u , userRoles as ur , Roles as r-->
+    <select id="findByUserId" resultType="mybatis.board.domain.user.UserVO">
+        SELECT u.password as password,
+               u.name     as name,
+               r.roleName AS roleName
+        FROM users u
+                 INNER JOIN userRoles ur
+                            ON u.userNo = ur.userNo
+                 INNER JOIN roles r
+                            ON r.roleNo = ur.roleNo
+        WHERE u.userId = #{userId}
     </select>
 
-    <!--#{rowStart} AND #{rowEnd} -->
-    <select id="listCount" parameterType="mybatis.board.domain.user.SearchCriteria" resultType="int">
-        SELECT count(id) FROM board
-        where 1=1
-        <include refid="search"></include>
-        AND id > 0
-    </select>
-
-    <insert id="insertBoard" parameterType="mybatis.board.domain.user.UserVO" useGeneratedKeys="true" keyProperty="id">
-        <selectKey keyProperty="id" resultType="long" order="BEFORE">
-            SELECT board_sequence.nextval from dual
-        </selectKey>
-    INSERT INTO board(id,
-                          author,
-                          title,
-                          content
-        )
-        VALUES (
-                   #{id},
-                   #{author},
-                   #{title},
-                   #{content}
-               )
-    </insert>
-    <insert id="insertFile" parameterType="hashMap">
-        INSERT INTO MP_FILE(
-            FILE_NO,
-            id,
-            ORG_FILE_NAME,
-            STORED_FILE_NAME,
-            FILE_SIZE
-        )VALUES(
-                   SEQ_MP_FILE_NO.NEXTVAL,
-                   #{id},
-                   #{ORG_FILE_NAME , jdbcType=VARCHAR },
-                   #{STORED_FILE_NAME , jdbcType=VARCHAR },
-                   #{FILE_SIZE , jdbcType=VARCHAR }
-               )
+    <insert id="userSave" parameterType="mybatis.board.domain.user.UserVO">
+        INSERT INTO users
+        (userNo,
+         userId,
+         password,
+         name)
+        VALUES (SEQ_USERLIST.NEXTVAL,
+                #{userId},
+                #{password},
+                #{name})
     </insert>
 
-    <select id="selectFileList" parameterType="long" resultType="hashMap">
-        select id,
-               FILE_NO,
-               ORG_FILE_NAME,
-               ROUND(FILE_SIZE/1024,1) AS FILE_SIZE
-        FROM MP_FILE
-        WHERE id=#{id}
-        AND   DEL_GB='N'
-        ORDER BY FILE_NO ASC
-    </select>
-    <select id="selectFileInfo" parameterType="hashMap" resultType="hashMap">
-        SELECT
-            STORED_FILE_NAME,
-            ORG_FILE_NAME
-        FROM MP_FILE
-        WHERE FILE_NO = #{FILE_NO}
+    <insert id="userRoleSave">
+        INSERT INTO userRoles
+        (userNo,
+         roleNo)
+        VALUES (#{userNo},
+                #{roleNo})
+    </insert>
+
+    <select id="findUserNo" resultType="Integer">
+        SELECT userNo
+        FROM users
+        WHERE userId = #{userId}
     </select>
 
-    <update id ="updateFile" parameterType="hashMap">
-        UPDATE MP_FILE SET
-        DEL_GB='Y'
-        WHERE FILE_NO = ${FILE_NO}
-    </update>
-
-    <select id="findByItem" resultType="mybatis.board.domain.user.UserVO">
-        SELECT * FROM board where id=#{id}
+    <select id="findRoleNo" resultType="Integer">
+        SELECT roleNo
+        FROM roles
+        WHERE roleName = #{roleName}
     </select>
-
-    <update id="updateViewCnt">
-        UPDATE board set recnt = recnt + 1 where id=#{id}
-    </update>
-
-    <delete id="deleteById">
-        delete from board where id=#{id}
-    </delete>
-
-    <update id="modifyBoard" parameterType="mybatis.board.domain.user.UserVO">
-        UPDATE board SET
-        title  = #{title},
-        content = #{content}
-        WHERE id=#{id}
-    </update>
-
-
-
 </mapper>
