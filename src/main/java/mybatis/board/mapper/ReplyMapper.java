@@ -7,12 +7,13 @@ import java.util.List;
 
 @Mapper
 public interface ReplyMapper {
-    public List<ReplyVO> readReply(long id) throws Exception;
+    List<ReplyVO> readReply(long id) throws Exception;
 
-    public void writeReply(ReplyVO vo) throws Exception;
+    boolean writeReply(ReplyVO vo) throws Exception;
 
-    public void deleteReply(ReplyVO vo);
+    void deleteReply(ReplyVO vo);
 
-    public ReplyVO findById(long rno);
-    void modifyReply(ReplyVO vo);
+    ReplyVO findById(long rno);
+
+    int modifyReply(ReplyVO vo);
 }
