@@ -1,106 +1,66 @@
 package mybatis.board.service.user;
 
 import lombok.extern.slf4j.Slf4j;
-import mybatis.board.domain.reply.ReplyVO;
-import mybatis.board.domain.user.SearchCriteria;
+import mybatis.board.domain.user.UserPrincipalVO;
 import mybatis.board.domain.user.UserVO;
 import mybatis.board.mapper.UserMapper;
-import mybatis.board.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
 
+/**
+ * DB로부터 회원정보를 가져와 있는 회원인지 아닌지 체크여부를 하는 중요한 메소드
+ */
 @Slf4j
 @Service
-public class UserServiceImpl implements UserService{
-    private FileUtils fileUtils;
-    private UserMapper userDao;
+public class UserServiceImpl implements UserDetailsService {
+        /*https://gaemi606.tistory.com/entry/Spring-%EC%8A%A4%ED%94%84%EB%A7%81-%EC%8B%9C%ED%81%90%EB%A6%AC%ED%8B%B0Spring-Security-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0-3-%EB%93%9C%EB%94%94%EC%96%B4-DB%EC%97%B0%EB%8F%99-%EB%A1%9C%EA%B7%B8%EC%9D%B8?category=745027 xml방식*/
+    /*https://hyunsangwon93.tistory.com/27?category=746259*/
+    private final UserMapper userMapper;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserMapper userDao,FileUtils fileUtils ) {
-        this.userDao = userDao;
-        this.fileUtils=fileUtils;
+    public UserServiceImpl(UserMapper userMapper,BCryptPasswordEncoder bCryptPasswordEncoder)
+    {
+        this.userMapper = userMapper;
+        this.bCryptPasswordEncoder=bCryptPasswordEncoder;
     }
 
-   @Override
-    public List<UserVO> getBoardList(SearchCriteria scri) throws Exception {
-
-        return userDao.boardList(scri);
-    }
 
     @Override
-    public int listCount(SearchCriteria scri) throws Exception {
-        return userDao.listCount(scri);
-    }
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+/*사용자 아이디, 암호화된 패스워드, 권한 등) 넘겨줌*/
 
-    @Override
-    public void insertBoard(UserVO userVO, MultipartHttpServletRequest mpRequest) throws Exception {
-
-        userDao.insertBoard(userVO);
-
-        List<Map<String,Object>> list = fileUtils.parseInsertFileInfo(userVO, mpRequest);
-        int size = list.size();
-        for(int i=0; i<size; i++){
-            log.debug("fileUtilsList={}",list.get(i));
-           userDao.insertFile(list.get(i));
+        ArrayList<UserVO> userAuthes  = userMapper.findByUserId(userId);
+        userAuthes.forEach(System.out::println);
+        if(userAuthes.size() == 0){
+            throw new UsernameNotFoundException("User "+userId+" 찾을수 없다");
         }
+        return new UserPrincipalVO(userAuthes);
 
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public String InsertUser(UserVO userVO){
+        userVO.setPassword(bCryptPasswordEncoder.encode(userVO.getPassword()));
+        long flag = userMapper.userSave(userVO);
+        if(flag > 0){
 
+            long userNo = userMapper.findUserNo(userVO.getUserId());
+            long roleNo = userMapper.findRoleNo(userVO.getRoleName());
 
-    @Override
-    public UserVO findById(Long id) {
-        return userDao.findByItem(id);
-    }
+            userMapper.userRoleSave(userNo,roleNo);
 
-    @Override
-    public int updateViewCnt(Long id) {
-        return userDao.updateViewCnt(id);
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        userDao.deleteById(id);
-    }
-
-    @Override
-    public void modifyBoard(UserVO userVO) {
-
-        userDao.modifyBoard(userVO);
-    }
-
-    @Override
-    public List<Map<String, Object>> selectFileList(long id) throws Exception {
-        return userDao.selectFileList(id);
-    }
-
-    @Override
-    public Map<String, Object> selectFileInfo(Map<String, Object> map) throws Exception {
-        return userDao.selectFileInfo(map);
-    }
-
-    /**
-     *검증코드 제목, 작성자 ,내용 중  NULL 값이나 , "" 빈문자열 올시 error 메세지 반환
-     */
-    @Override
-    public Map<String, String> validateHandling(Errors errors) {
-
-        Map<String, String> validatorResult = new HashMap<>();
-
-        for (FieldError error : errors.getFieldErrors()) {
-            String validKeyName = String.format("valid_%s", error.getField());
-            validatorResult.put(validKeyName, error.getDefaultMessage());
-            System.out.println(validKeyName);
+            return "success";
         }
-
-        return validatorResult;
+        return "fail";
     }
 
 
