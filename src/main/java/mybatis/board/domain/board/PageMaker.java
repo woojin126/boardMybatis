@@ -1,4 +1,4 @@
-package mybatis.board.domain.user;
+package mybatis.board.domain.board;
 
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
