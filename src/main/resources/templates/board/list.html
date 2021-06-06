@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/default}">
+      layout:decorate="~{layout/default}" xmlns:sec="http://www.w3.org/1999/xhtml">
 
 
 <th:block layout:fragment="css">
@@ -27,6 +27,11 @@
 
 
 <div class="container" layout:fragment="content">
+
+    <th:block sec:authorize="isAuthenticated()">
+        <span sec:authentication="principal.username"></span>님 반가워요!
+    </th:block>
+
     <table class="table">
         <thead class="thead-light">
         <tr class="text-center">
