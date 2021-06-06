@@ -1,7 +1,7 @@
 package mybatis.board.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import mybatis.board.domain.user.UserVO;
+import mybatis.board.domain.board.BoardVO;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -14,7 +14,7 @@ import java.io.File;
 public class FileUtils {
     private static  final String filePath= "C:\\mp\\file\\";
 
-    public List<Map<String,Object>> parseInsertFileInfo(UserVO userVO,String[] files,String[] fileNames,
+    public List<Map<String,Object>> parseInsertFileInfo(BoardVO boardVO, String[] files, String[] fileNames,
                                                         MultipartHttpServletRequest mpRequest)throws Exception{
 
         Iterator<String> iterator = mpRequest.getFileNames();
@@ -26,7 +26,7 @@ public class FileUtils {
         List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
         Map<String,Object> listMap = null;
 
-        long id = userVO.getId();
+        long id = boardVO.getId();
 
         File file = new File(filePath);
         if (file.exists() == false){
