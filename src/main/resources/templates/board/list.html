@@ -3,7 +3,14 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/default}" xmlns:sec="http://www.w3.org/1999/xhtml">
 
+<!--https://www.thymeleaf.org/doc/articles/springsecurity.html
+시큐리티 타임리프 분기처리-->
 
+<!--https://micropilot.tistory.com/2989
+스프링 Security 의 인증정보를 콘트롤러 클래스와 뷰(JSP)에서 사용하는 예
+-->
+
+<!--sec:authorize="isAnonymous()" 인증된 사용자만 보여준다-->
 <th:block layout:fragment="css">
     <style>
         *{
@@ -28,9 +35,7 @@
 
 <div class="container" layout:fragment="content">
 
-    <th:block sec:authorize="isAuthenticated()">
-        <span sec:authentication="principal.username"></span>님 반가워요!
-    </th:block>
+
 
     <table class="table">
         <thead class="thead-light">
@@ -81,10 +86,6 @@
     </div>
 
 
-
-    <!--
-        <li th:each="idx,iterStat : ${#numbers.sequence(pageMaker.startPage,pageMaker.endPage)}"
-            th:classappend="${pageMaker.cri.page} == ${idx} ? active : null ">-->
     <div class="box-footer clearfix">
         <ul class="pagination pagination-sm no-margin pull-right">
 
@@ -106,11 +107,6 @@
     </div>
 
 
-
-
-<!-- https://melonpeach.tistory.com/30?category=806570 현재내가하고잇는 게시판 -->
-<!--https://kogle.tistory.com/265 타임리프 셀럭트-->
-    <!--https://shinsunyoung.tistory.com/78 스프링 시큐리티 로그인-->
 
     <div class="form-group">
         <select id="optionList" name="searchType" class="form-control">
@@ -148,13 +144,3 @@
     </th:block>
 </div>
 </html>
-<!--    $("select option:selected").value()-->
-
-<!--
-let selectOption = document.getElementById("test").options.selectedIndex;
- const btn = document.querySelector("#searchBtn");
- btn.addEventListener('click',function(){
-     alert("하위");
-     self.location= "list" + '${pageMaker.makeQuery(1)}' + "&searchType=" + selectOption + "&keyword=" + encodeURIComponent($('#keywordInput').value());
- });
--->
