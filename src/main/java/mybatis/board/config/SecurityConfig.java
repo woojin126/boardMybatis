@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                      .antMatchers("/user/save").permitAll() //모두 허용
-                     .antMatchers("/").hasAnyAuthority("ADMIN","USER")
+                     .antMatchers("/list").hasAnyAuthority("ADMIN","USER")
                      .anyRequest().authenticated()
                 .and()
                     .csrf().ignoringAntMatchers("/user/save")
@@ -71,7 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl("/")
+                    .logoutSuccessUrl("/login")
                     .deleteCookies("JSESSIONID")
                 .and()
                     .exceptionHandling()
