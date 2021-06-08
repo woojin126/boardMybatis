@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
 import java.net.URLEncoder;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 /*https://melonpeach.tistory.com/51?category=806570 파일업로드 */
@@ -38,29 +40,40 @@ public class BoardController {
     }
 
 
-
+/*https://dalpenglow.tistory.com/135?category=830106*/
 
     @GetMapping("/list")
-    public String list(Model model , @ModelAttribute("scri") SearchCriteria scri) throws Exception
+    public String list(Model model ,
+                       @ModelAttribute("scri") SearchCriteria scri
+                       ) throws Exception
     {
+
         List<BoardVO> boardList = boardService.getBoardList(scri);
         model.addAttribute("boardList",boardList);
 
         PageMaker pageMaker = new PageMaker();
         pageMaker.setSearchCriteria(scri);
         pageMaker.setTotalCount(boardService.listCount(scri));
-
         model.addAttribute("pageMaker",pageMaker);
         return "board/list";
     }
 
     @GetMapping("/post")
-    public String post(){
+    public String post(Principal principal,Model model){
+        String name = principal.getName();//시큐리티에저장되있는 이름
+        model.addAttribute("author",name);
+
         return "board/post";
     }
 
     @PostMapping("/post")
-    public String getPost(@ModelAttribute @Valid BoardVO boardVO, Errors errors, Model model, String[] files, String[] fileNames, MultipartHttpServletRequest mpReqeust) throws Exception {
+    public String getPost(
+            @ModelAttribute @Valid BoardVO boardVO,
+            Errors errors, Model model,
+            String[] files,
+            String[] fileNames,
+            MultipartHttpServletRequest mpReqeust
+    ) throws Exception {
 
         log.debug("UserVoId={}", boardVO.getId());
         log.debug("UserVoAuthor={}", boardVO.getAuthor());
@@ -78,15 +91,23 @@ public class BoardController {
      *게시글 새로고침시 조회수 무한증가 해결을 위해 cookie 사용
      */
     @GetMapping("/detailItem")
-    public String editForm(@RequestParam Long id, @RequestParam(value = "valid_author", required = false) String valid_author
+    public String editForm(@RequestParam Long id
+            , @RequestParam(value = "valid_author", required = false) String valid_author
             , @RequestParam(value = "valid_content", required = false) String valid_content
-            , Model model, HttpServletRequest request, HttpServletResponse response
-    ) throws Exception {
+            , Model model
+            , HttpServletRequest request
+            , HttpServletResponse response
+            , Principal principal
 
+
+     ) throws Exception {
         if(id == null){
             throw new NullPointerException("해당하는 값이없습니다");
         }
         BoardVO item = boardService.findById(id);
+        System.out.println(item.getAuthor().equals(principal.getName())+"결과만확인"); //true 라고뜸
+
+
         List<ReplyVO> replyList = replyService.readReply(id);
         List<Map<String, Object>> fileList = boardService.selectFileList(id);
         Cookie[] cookies = request.getCookies();
@@ -138,11 +159,11 @@ public class BoardController {
     public void fileDown(@RequestParam Map<String, Object> map, HttpServletResponse response) throws Exception {
         Map<String, Object> resultMap = boardService.selectFileInfo(map);
         for (String s : resultMap.keySet()) {
-            System.out.println("files" + s);
+            log.debug("files={}",s);
         }
         String storeFileName = (String) resultMap.get("STORED_FILE_NAME");
         String originalFileName = (String) resultMap.get("ORG_FILE_NAME");
-        System.out.println("storeFileName==========" + storeFileName);
+        log.debug("storeFileName={}",storeFileName);
         byte fileByte[] = FileUtils.readFileToByteArray(new File("C:\\mp\\file\\" + storeFileName));
         response.setContentType("application/octet-stream");
         response.setContentLength(fileByte.length);
@@ -203,7 +224,7 @@ public class BoardController {
 
     private boolean valiationForm(@ModelAttribute @Valid Object vo, Errors errors, Model model, String updateLine) {
         if (errors.hasErrors()) {
-            model.addAttribute(updateLine, vo);
+            model.addAttribute(updateLine, vo);//수정전용
             Map<String, String> validatorResult = boardService.validateHandling(errors);
             for (String key : validatorResult.keySet()) {
                 log.debug("modifyFormErrorKey={}",key);
