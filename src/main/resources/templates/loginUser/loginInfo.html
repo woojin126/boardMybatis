@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+
+<th:block layout:fragment="css">
+
+</th:block>
+
+<div class="container" layout:fragment="content">
+
+    <!-- 로그아웃  -->
+    <form th:action="@{/logout}" method="post">
+        <button class="btn btn-md btn-danger btn-block" name="registration" type="submit">Logout</button>
+    </form>
+
+    <!-- 로그인한 유저 이름및 권한 확인 -->
+    <div class="panel-group" style="margin-top:40px">
+        <div class="panel panel-primary">
+            <form th:action="@{/list}" method="get">
+            이름<span th:utext="${name}"></span>
+            권한<p class="admin-message-text text-center" th:utext="${auth}"></p>
+                <button type="submit" value="리스트로"></button>
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <th:block layout:fragment="script">
+    </th:block>
+</div>
+</html>
