@@ -1,7 +1,7 @@
 #스케쥴러 샘플 프로젝트
 ## 목표
 
-스프링 MVC 기반 MyBatis 방식을 이용하여 게시판 검증,쿠키,세션 등<br/>
+스프링 MVC 기반 MyBatis 방식을 이용하여 게시판 검증,쿠키,세션,스프링 시큐리티 로그인 등<br/>
 다양한 기능을 접목하여 만들어 보는 것을 목표로 합니다.
 
 ## 스팩
@@ -19,6 +19,7 @@
 - lombok
 - jdbc
 - mybatis
+- springSecurity
 
 ### IDEL
 
@@ -37,6 +38,7 @@
 
 - 1.1.0:BoardUser DB 테이블 스키마 설계
 - 1.1.1:간단한 View 화면 개발
+- 1.1.2:스프링 시큐리티 이용하여 로그인창개발(회원은 postman으로 함)
 - 1.1.2:Null,빈칸 검증 처리
 - 1.1.3:새로고침시 조회수 무한증가 fix
 
@@ -107,6 +109,44 @@ public Map<String, String> validateHandling(Errors errors) {
 
 ```
 
+#### 스프링시큐리티 처음사용시 페이지 접근이 아예 불가능했음
+
+```java
+
+ @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+
+                     .antMatchers("/user/save").permitAll() //모두 허용
+                     .antMatchers("/list").hasAnyAuthority("ADMIN","USER") 권한설정을 처음에 할줄몰라서 페이지 접근조차 할수없었음..
+                     .anyRequest().authenticated()
+                .and()
+                    .csrf().ignoringAntMatchers("/user/save")
+                .and()
+                    .formLogin()
+                    .defaultSuccessUrl("/list") //로그인 성공시 이동할 URL
+                .and()
+                    .logout()
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                    .logoutSuccessUrl("/login")
+                    .deleteCookies("JSESSIONID")
+                .and()
+                    .exceptionHandling()
+                    .accessDeniedPage("/access-denied")
+                .and()
+                .sessionManagement()
+                .maximumSessions(1) //같은 아이디로 1명만 로그인
+                .maxSessionsPreventsLogin(false) //false :신규 로그인은 허용, 기존 사용자는 세션 아웃  true: 이미 로그인한 세션이있으면 로그인 불가
+                .expiredUrl("/login"); //세션 아웃되면 이동할 url
+
+    }
+}
+
+
+
+
+```
 
 
 
