@@ -1,6 +1,6 @@
 #스케쥴러 샘플 프로젝트
 ## 목표
-
+(db정보는 맨아래)
 스프링 MVC 기반 MyBatis 방식을 이용하여 게시판 검증,쿠키,세션,스프링 시큐리티 로그인 등<br/>
 다양한 기능을 접목하여 만들어 보는 것을 목표로 합니다.
 
@@ -144,8 +144,103 @@ public Map<String, String> validateHandling(Errors errors) {
 }
 
 
+-board table
+```java
+create table board(
+id number (4),
+author varchar2(30),
+title varchar2(30),
+content varchar2(200),
+regdate DATE DEFAULT SYSDATE,
+recnt number(4) default 0,
+primary key(id)
+);  
+
+create sequence board_sequence 시퀀스
+INCREMENT BY 1
+START WITH 1
+nomaxvalue nocache;
+```
 
 
+-reply table
+```java
+create table mp_reply (
+ id number not null,
+ rno number not null,
+ content varchar2(1000) not null,
+ author varchar2(50) not null,
+ regdate date default sysdate,
+ primary key(id,rno)
+);
+
+alter table mp_reply add constraint mp_reply_id foreign key(id) //부모테이블삭제시 자식인 댓글테이블도 같이삭제
+references board(id) ON DELETE CASCADE; 
+
+create sequence mp_reply_seq start with 1 minvalue 0; 시퀀스
+
+```
+
+- file table
+```java
+CREATE TABLE MP_FILE
+(
+    FILE_NO NUMBER,                         --파일 번호
+    id NUMBER NOT NULL,                    --게시판 번호
+    ORG_FILE_NAME VARCHAR2(260) NOT NULL,   --원본 파일 이름
+    STORED_FILE_NAME VARCHAR2(36) NOT NULL, --변경된 파일 이름
+    FILE_SIZE NUMBER,                       --파일 크기
+    REGDATE DATE DEFAULT SYSDATE NOT NULL,  --파일등록일
+    DEL_GB VARCHAR2(1) DEFAULT 'N' NOT NULL,--삭제구분
+    PRIMARY KEY(FILE_NO)                    --기본키 FILE_NO
+);
+
+alter table mp_file add constraint mp_file_id foreign key(id) 테이블삭제시 덩달아 삭제
+references board(id) ON DELETE CASCADE;
+```
+
+- user table
+
+```java
+create table users(
+userNo number not null primary key,
+userId varchar(20) not null,
+password varchar(100) not null,
+name varchar(20)
+);
+
+create sequence SEQ_USERLIST 시퀀스
+start with 1
+increment by 1
+nomaxvalue nocache;
+```
+
+
+- role table
+```java 
+
+create table roles
+(
+    roleNo number not null primary key,
+    roleName varchar(20) not null
+);
+
+```
+
+
+- userRoles table
+```
+create table userRoles
+(
+userNo number not null,
+roleNo number not null
+);
+
+
+alter table userRoles add constraint user_no foreign key(userNo) 유저롤은 userNo 참조
+references users(userNo);
+alter table userRoles add constraint role_no foreign key(roleNo) 유저롤은 roleNo 참조
+references roles(roleNo);
 ```
 
 
