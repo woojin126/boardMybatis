@@ -15,7 +15,6 @@
         SELECT  id,
                 title,
                 content,
-
                 author,
                 regdate,
                 recnt
@@ -23,7 +22,6 @@
                  SELECT id,
                         title,
                         content,
-
                         author,
                         regdate,
                         recnt,
@@ -53,6 +51,7 @@
                           author,
                           title,
                           content
+
         )
         VALUES (
                    #{id},
