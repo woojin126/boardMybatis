@@ -20,6 +20,7 @@ public class BoardVO {
     private String author;
     @NotBlank(message = "제목 입력하세요")
     private String title;
+    private String image;
     @NotBlank(message = "내용 입력해주세요")
     private String content;
     private String regdate;
@@ -31,12 +32,14 @@ public class BoardVO {
         this.content = content;
     }
 
+
     @Override
     public String toString() {
         return "BoardVO{" +
                 "id=" + id +
                 ", author='" + author + '\'' +
                 ", title='" + title + '\'' +
+                ", image='" + image + '\'' +
                 ", content='" + content + '\'' +
                 ", regdate='" + regdate + '\'' +
                 ", recnt=" + recnt +
